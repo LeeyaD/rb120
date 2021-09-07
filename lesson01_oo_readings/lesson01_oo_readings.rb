@@ -12,6 +12,7 @@ end
 # VOCAB - Mixin: When a module is mixed in with a class using the 'include' method invocation. Once mixed in, the behaviors declared in that module are available to the class & it's objects.
 # EXAMPLE #
 # 'include Speak' in 'GoodDog' & 'HumanBeing' classes, instances from both classes now respond to methods within the 'Speak' module (i.e. .speak, .whisper)
+# ??? - Also used as a namespace?
 
 # OBJECTS
 # - created from classes
