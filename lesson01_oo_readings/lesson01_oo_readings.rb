@@ -1,5 +1,5 @@
-# VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changes w/o explicit intention. This ability is done by creating objects, and explosing interfaced (i.e. methods) to interactwith those objects.
-# ??? - We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide?
+# VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changes w/o explicit intention. This ability is done by creating objects, and explosing interfaces (i.e. methods) to interact w/ those objects.
+# * - We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide? Ex. only creating a 'attr_reader' therefore, that particular atribute can't be changed, it's permanent as long the instance exists.
 
 # VOCAB - Polymorphism: The ability for objects of different types to respond to the same method invocation
 
@@ -140,6 +140,49 @@ class GoodDog
   end
 end
 
+# CLASS METHODS
+# methods we can call directly on the class itself, without having to instantiate any objects
+# * Syntax:
+def self.what_am_i
+  "I'm a GoodDog class"
+end
+# where functionality that doesn't pertain to individual instances is stored
+
+# CLASS VARIABLES - @@
+# capture information pertaining to the entire class itself
+
+# THE to_s METHOD
+# an instance method that's built into every class in Ruby
+# * #puts automatically calls #to_s in it's arg
+puts sparky == puts sparky.to_s
+# By default, when called on a class, #to_s returns the objects class and an encoding of the object id
+# * #puts calls #to_s on any arg that's not an array. For an array, it writes on separate lines the result of calling #to_s on each element
+# when defining a #to_s method in our class we override the #to_s instance method
+# ** #to_s is also automatically called in string interpolation
+# KNOWING when #to_s is called (#puts & string interpolation) will help us understand how to read & write better OO code
+
+# #p similar to #puts, automatically calls another built in Ruby method..#inspect
+# * #inspect is very helpful for debugging purposes so we never want to override it
+p sparky == puts sparky.inspect
+
+# MORE ABOUT 'self'
+# it can refer to different things depending on where it's referenced
+# 2 clear uses:
+# - ONE. Used when calling setter methods withing the class. This allows Ruby to differentiate between initializing a local variable & calling a setter method
+# ** when used within an instance method, it references the CALLING OBJECT
+self.name= == sparky.name= #ALSO...
+def info
+  "#{self.name} weighs #{self.weight} and is #{self.height} tall."
+end
+sparky.info #=> "#{sparky.name} weighs #{sparky.weight} and is #{sparky.height} tall."
+# - TWO. Used when defining class methods
+# ** when used outside of an instance method but within a class, it references the class itself
+class GoodDog
+  puts self
+end
+GoodDog # => GoodDog, therefore...
+def self.class_method == def GoodDog.class_method
+# it's actually being defined on the class
 
 
 
