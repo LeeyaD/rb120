@@ -3,8 +3,6 @@
 
 # VOCAB - Polymorphism: The ability for objects of different types to respond to the same method invocation
 
-# VOCAB - Inheritance: When a class inherits the behaviors of another class, referred to as the 'superclass'. This allows us to define basic classes with larger reusability and smaller 'subclasses' for fine-grained, detailed behavior
-
 # VOCAB - Modules: Another way to implement polymorphism in our programs. Similar to classes, they contain shared behavior. *You CANNOT create an object from a module.*
 # * Syntax
 module Speak
@@ -184,7 +182,90 @@ GoodDog # => GoodDog, therefore...
 def self.class_method == def GoodDog.class_method
 # it's actually being defined on the class
 
+# INHERITANCE
+# When a class inherits the behaviors of another class, referred to as the 'superclass'. This allows us to define basic classes with larger reusability and smaller 'subclasses' for fine-grained, detailed behavior
+# "define basic classes with larger reusability" extract common behaviors from classes that share that behavior and move it to a superclass
+# -- CLASS INHERITANCE
+# * Syntax
+class GoodDog < Animal
+end
+# * inheritance can be a great way to remove duplication in our codebase
 
+# SUPER
+# a Ruby keyword that allows us to call methods earlier in the method lookup path
+# an example
+class Animal
+  def speak
+    "Hello!"
+  end
+end
 
+class GoodDog < Animal
+  def speak
+    super + " from GoodDog class"
+  end
+end
+sparky = GoodDog.new
+puts sparky.speak # "Hello! from GoodDog class"
+# more common to use it in #initialize
 
+# when super is called with no arguments, it automatically forwards all arguments passed into the method from which it was called. These arguments then get passed into the method super calls located further up the method lookup chain
+# when super is called with specified arguments, only those arguments get along
+# when super is called with empty '()', super(), it calls the method in the superclass with no arguments
+# ** if there's a method in the superclass that takes no arguments its safest to use 'super()'
 
+# MIXING IN MODULES
+# another way to DRY up our code.
+# unlike inheritance, it's not hierarchical 
+# example of class based inheritance
+#  Animal
+#  - Fish
+#  - Mammal
+#   -- Cat
+#   -- Dog
+# we want a #swim method for class Fish, problem is some mammals can swin too.
+# can't move #swim to class Animal b/c not all animals can swim, only some
+# so how to we make #swim, a shared behavior, availabe to class Fish and class Dog & class Cat?
+# we use a module
+# ** Note: common naming convention for Ruby is to use the "able" suffix on whatever verb describes the behavior the module is modeling (e.g. our Swimmable module, or a module that describes "walking" as Walkable). Not all modules are named like this but it is quite common.
+
+# INHERITANCE vs. MODULES
+# 2 primary ways Ruby impliments inheritance
+# - ONE. Traditional inheritance, hierarchical
+# -- one type inherits the behaviors of another type, thereby specializing the type of the superclass into fine-grained, detailed behavior
+# - TWO. Interface inheritance, mixing in modules
+# -- no inheritance from another time BUT inherits the interface provided by the mixed in module. In this case, re the module, the result is not a specialized type
+# Consider the following 3 things when deciding whether to use inheritance vs. modules
+# 1. You can only subclass (class inheritance) from one class. You can mix in as many modules (interface inheritance) as you'd like.
+# 2. If there's an "is-a" relationship, class inheritance is usually the correct choice. If there's a "has-a" relationship, interface inheritance is generally a better choice. For example, a dog "is an" animal and it "has an" ability to swim.
+# 3. You cannot instantiate modules (i.e., no object can be created from a module). Modules are used only for namespacing and grouping common methods together.
+
+# METHOD LOOKUP PATH
+# the order in which classes are inspected when you call a method
+class Animal
+  include Walkable
+end
+-----Animal Lookup Path------
+Animal
+Walkable
+Object
+Kernel
+BasicObject
+
+class GoodDog < Animal
+  include Swimmable
+  include Climbable
+end
+-----GoodDog Lookup Path------
+GoodDog
+Climbable
+Swimmable
+Animal
+Walkable
+Object
+Kernel
+BasicObject
+# * the order in which we mixin our modules is important b/c Ruby looks at the last module we included FIRST
+# * even modules mixed in to superclasses are included in the lookup path
+
+# MORE MODULES
