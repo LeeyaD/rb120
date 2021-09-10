@@ -1,37 +1,7 @@
-module Swimmable
-  def swim
-    "I'm swimming"
+module Mammal
+  def self.out_of_place_method(arg)
+    arg *2
   end
 end
 
-module Walkable
-  def walk
-    "I'm walking"
-  end
-end
-
-module Climbable
-  def climb
-    "I'm climbing"
-  end
-end
-
-
-class Animal
-  include Walkable
-
-  def speak
-    "I'm an animal and I speak"
-  end
-end
-
-class GoodDog < Animal
-  include Swimmable
-  include Climbable
-end
-
-# puts "-----Animal Lookup Path------"
-# puts Animal.ancestors
-
-puts "-----GoodDog Lookup Path------"
-puts GoodDog.ancestors
+value = Mammal.out_of_place_method(4)

@@ -269,3 +269,26 @@ BasicObject
 # * even modules mixed in to superclasses are included in the lookup path
 
 # MORE MODULES
+# 2 more uses for modules
+#  ONE. namespacing
+# -- using modules to group related classes
+module Mammal
+  class GoodDog
+    def speak(sound)
+      p "#{sound}"
+    end
+  end
+end
+buddy = Mammal::Dog.new
+# We call classes in a module by appending the class name to the module name with two colons(::)
+#  TWO. using modules as a container for methods, called 'module methods'
+#   -- useful for methods that seem out of place in our code
+module Mammal
+  def self.out_of_place_method(arg)
+    arg *2
+  end
+end
+value = Mammal.out_of_place_method(4)
+# defining methods within a module means we call the methods directly on the module OR
+value = Mammal::some_out_of_place_method(4)
+# but the first way is preferred
