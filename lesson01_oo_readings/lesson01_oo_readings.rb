@@ -292,3 +292,58 @@ value = Mammal.out_of_place_method(4)
 # defining methods within a module means we call the methods directly on the module OR
 value = Mammal::some_out_of_place_method(4)
 # but the first way is preferred
+
+# PRIVATE, PROTECTED, AND PUBLIC
+# VOCAB - Access Control: The ability to allow or restrict access to a particular thing through the use of 'access modifiers'. In Ruby, since we're concerned about allowing/restricting access to the methods in our class, the concept is referred to as Method Access Control.
+# In Ruby MAC in achieved thru the use of 'private', 'protected' and 'public' access modifiers
+# PUBLIC - all methods are automatically public unless 'private'/'protected' are used
+#  - public method: available to the rest of the program to use (to anyone who knows the either the class or object's name) and "...comprise the class's interface (that's how other classes and objects will interact with this class and its objects)."
+# PRIVATE - methods that aren't available to the rest of the program, but only from other methods in the class (see syntax below)
+# defined simply by using the 'private' method, any methods located below it are private UNLESS another method like 'protected' is called to negate it
+# * Syntax
+def public_disclosure
+  "#{self.name} in human years is #{human_years}"
+  # * originally, couldn't be called with 'self' as it was the equivalent of calling 'sparky.human_years' but as of Ruby 2.7 it can be called w/ 'self' however it's availability remains the same, only the current object can call it
+end
+
+private
+
+def human_years
+  age * DOG_YEARS
+end
+# PROTECTED -
+# - ONE - from inside the class, protected methods are accessible just like public methods.
+# - TWO - from outside the class, protected methods act just like private methods.
+class Person
+  attr_writer :age
+
+  def initialize(name)
+    @name = name
+  end
+
+  def age_against(other)
+    if age == other.age
+      "#{name} is same age as #{other.name}."
+    elsif age < other.age
+      "#{name} is younger than #{other.name}."
+    else
+      "#{name} is older than #{other.name}."
+    end
+  end
+
+protected # try to change this to private
+
+attr_reader :age, :name
+end
+
+bob = Person.new("Bob")
+bob.age = 20
+jane = Person.new("Jane")
+jane.age = 19
+puts bob.age_against(jane)
+# Difference btwn PRIVATE & PROTECTED can be seen here, when we have 2 objects of the same type (the Person class) that need access to each other's state or behavior
+# protected allows access between objects of the same type, i.e. only instances of the class or a subclass can call the method. This allows us to share sensitive data between instances of the same class type)
+# when a method is PRIVATE only the class--not instances of the class--can access it
+
+# ACCIDENTAL METHOD OVERRIDING
+# Every class inherently subclasses from class Object. Familiarize yourself w/ some common Object methods to make sure you don't accidentally override them as this can have devastating consequences for your application.
