@@ -1,3 +1,6 @@
+# OOP - Object-Oriented Programming
+# Ruby manipulates programing constructs called 'objects'; containers of data that can be changed & manipulated w/o affecting the entire program. This programming paradigm allows developers to section off areas of code that performed certain procedures so programs can become the interaction of many small parts, as opposed to one massive blob of dependency.
+
 # VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changes w/o explicit intention. This ability is done by creating objects, and explosing interfaces (i.e. methods) to interact w/ those objects.
 # * - We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide? Ex. only creating a 'attr_reader' therefore, that particular atribute can't be changed, it's permanent as long the instance exists.
 
