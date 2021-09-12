@@ -11,6 +11,7 @@
 module Speak
 end
 # VOCAB - Mixin: When a module is mixed in with a class using the 'include' method invocation. Once mixed in, the behaviors declared in that module are available to the class & it's objects.
+# --------Mixin: when a module is used to mix additional behavior and information into a class. Mixins allow us to customize a class without having to rewrite code.
 # EXAMPLE #
 # 'include Speak' in 'GoodDog' & 'HumanBeing' classes, instances from both classes now respond to methods within the 'Speak' module (i.e. .speak, .whisper)
 # ??? - Also used as a namespace?
@@ -231,6 +232,7 @@ puts sparky.speak # "Hello! from GoodDog class"
 # so how to we make #swim, a shared behavior, availabe to class Fish and class Dog & class Cat?
 # we use a module
 # ** Note: common naming convention for Ruby is to use the "able" suffix on whatever verb describes the behavior the module is modeling (e.g. our Swimmable module, or a module that describes "walking" as Walkable). Not all modules are named like this but it is quite common.
+# *-- extend --* Using 'extend' rather than 'include' when mixing in a module, means the class itself can use the methods as opposed to to instances of the class.
 
 # INHERITANCE vs. MODULES
 # 2 primary ways Ruby impliments inheritance
@@ -273,7 +275,7 @@ BasicObject
 
 # MORE MODULES
 # 2 more uses for modules
-#  ONE. namespacing
+#  ONE. namespacing; separating classes/methods/constants into named spaces
 # -- using modules to group related classes
 module Mammal
   class GoodDog
@@ -284,8 +286,11 @@ module Mammal
 end
 buddy = Mammal::Dog.new
 # We call classes in a module by appending the class name to the module name with two colons(::)
+# :: - scope resolution operator - tells Ruby where to look for a specific bit of code
+#    - it's how Ruby doesn't confuse Math::PI with Circle::PI, it knows where to look for 'PI'
+# ** Built in modules that we want to use need to be explicitely brought in using 'require' (e.g. require 'date')
 #  TWO. using modules as a container for methods, called 'module methods'
-#   -- useful for methods that seem out of place in our code
+# -- useful for methods that seem out of place in our code
 module Mammal
   def self.out_of_place_method(arg)
     arg *2
@@ -295,13 +300,15 @@ value = Mammal.out_of_place_method(4)
 # defining methods within a module means we call the methods directly on the module OR
 value = Mammal::some_out_of_place_method(4)
 # but the first way is preferred
+# ** Doesn't make sense to have variables in modules since they change but helpful constants are great
 
 # PRIVATE, PROTECTED, AND PUBLIC
 # VOCAB - Access Control: The ability to allow or restrict access to a particular thing through the use of 'access modifiers'. In Ruby, since we're concerned about allowing/restricting access to the methods in our class, the concept is referred to as Method Access Control.
 # In Ruby MAC in achieved thru the use of 'private', 'protected' and 'public' access modifiers
 # PUBLIC - all methods are automatically public unless 'private'/'protected' are used
 #  - public method: available to the rest of the program to use (to anyone who knows the either the class or object's name) and "...comprise the class's interface (that's how other classes and objects will interact with this class and its objects)."
-# PRIVATE - methods that aren't available to the rest of the program, but only from other methods in the class (see syntax below)
+# ?? Should we do was codecademy deems good practice and state 'public' for clarity in our code?
+# PRIVATE - methods that aren't available to the rest of the program, but only from other methods in the class (see syntax below). Separates the private implementation from the public interface
 # defined simply by using the 'private' method, any methods located below it are private UNLESS another method like 'protected' is called to negate it
 # * Syntax
 def public_disclosure
