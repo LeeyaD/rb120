@@ -303,6 +303,7 @@ value = Mammal::some_out_of_place_method(4)
 # ** Doesn't make sense to have variables in modules since they change but helpful constants are great
 
 # PRIVATE, PROTECTED, AND PUBLIC
+# ** another definition from exercise: The main difference between them is protected methods allow access between class instances, while private methods don't. If a method is protected, it can't be invoked from outside the class. This allows for controlled access, but wider access between class instances.
 # VOCAB - Access Control: The ability to allow or restrict access to a particular thing through the use of 'access modifiers'. In Ruby, since we're concerned about allowing/restricting access to the methods in our class, the concept is referred to as Method Access Control.
 # In Ruby MAC in achieved thru the use of 'private', 'protected' and 'public' access modifiers
 # PUBLIC - all methods are automatically public unless 'private'/'protected' are used
