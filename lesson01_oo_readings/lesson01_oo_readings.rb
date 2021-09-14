@@ -17,6 +17,7 @@ end
 # ??? - Also used as a namespace?
 
 # OBJECTS
+# - a combination of data & methods, objs can receive messages, send messages, and process data
 # - created from classes
 # - classes are molds & OBJS the things produced from those molds
 # - Individual OBJS contain diff. info from other OBJS but they're instances of the same class
@@ -27,6 +28,7 @@ end
 #    - clearly scoped at the obj (instance)  level since each obj has them to keep track of their states
 #   * instance var keep track of state *
 #   - behaviors are what objects can do using instance methods
+# - idea that a class groups behaviors (ie, methods)
 #    - different objs that are still objs/instances of the same class have the same behavior
 #   * instance methods expose behaviors for objects *
 end
@@ -39,7 +41,11 @@ sparky = GoodDog.new # .new returns an object
 
 # ** all objects of the same class have the same behaviors but different states
 
-# VOCAB - Instantiation: the entire workflow of creating a new obj / instance from a class
+# VOCAB - Instantiation: the entire workflow of creating a new obj / instance from a class.
+# #iniitalize is a 'constructor' in Ruby & constructors don't return any values.
+# a constructors sole purpose is to initiate the state of an object
+# 'constructor overloading' is the ability to have multiple constructors in a class.
+# * ^ Ruby doesn't allow this but we can mimic this w/ default parameters values
 
 # METHOD LOOKUP
 # Ruby has a distinct lookup path each time a method is called
@@ -47,16 +53,18 @@ sparky = GoodDog.new # .new returns an object
 
 # INITIALIZING A NEW OBJECT
 class GoodDog
-  def initialize # <- a 'constructor' b/c it gets triggered whenever we create a new object
+  def initialize # <- called the moment an object is created
     puts "This object was initialized!"
   end
 end
 
+
 sparky = GoodDog.new # => "This object was initialized!"
 # the class method, #new, ? leads to ? the instance method, #initialize
 
-# INSTANCE VARIABLE - @[var]
+# INSTANCE VARIABLE - @[var] ('aka' member fields)
 # - exists as long as the object (instance) exists
+# - In Ruby, they're only accessible via methods
 class GoodDog
   def initialize(name)
     @name = name
