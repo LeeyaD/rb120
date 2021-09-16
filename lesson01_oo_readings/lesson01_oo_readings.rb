@@ -4,7 +4,8 @@
 # VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changes w/o explicit intention. This ability is done by creating objects, and explosing interfaces (i.e. methods) to interact w/ those objects.
 # * - We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide? Ex. only creating a 'attr_reader' therefore, that particular atribute can't be changed, it's permanent as long the instance exists.
 
-# VOCAB - Polymorphism: The ability for objects of different types to respond to the same method invocation
+# VOCAB - Polymorphism: The ability for objects of different types to respond to the same method invocation.
+# in other words, in Ruby, we conentrate on the fact that methods with the same name do different things
 
 # VOCAB - Modules: Another way to implement polymorphism in our programs. Similar to classes, they contain shared behavior. *You CANNOT create an object from a module.*
 # * Syntax
@@ -101,7 +102,7 @@ class GoodDog
 end
 puts sparky.name
 sparky.name = "Duke"
-# 'attr_accessor' takes a symbol ':name' as an arg and creates the method name for getter & setter methods using it as well as a instance variable
+# 'attr_accessor' takes a symbol ':name' as an arg and creates the getter & setter methods and the instance variable
 # ex. attr_accessor :name => #name, #name=, @name
 attr_reader # if we want a getter method w/o a setter
 attr_writer # vice versa
@@ -162,7 +163,7 @@ end
 # capture information pertaining to the entire class itself
 
 # THE to_s METHOD
-# an instance method that's built into every class in Ruby
+# an instance method that's built into every class in Ruby, it returns the string representation of the object
 # * #puts automatically calls #to_s in it's arg
 puts sparky == puts sparky.to_s
 # By default, when called on a class, #to_s returns the objects class and an encoding of the object id
@@ -279,6 +280,13 @@ Object
 Kernel
 BasicObject
 # * the order in which we mixin our modules is important b/c Ruby looks at the last module we included FIRST
+class GoodDog < Animal
+  include Swimmable, Climbable
+# including modules on one line, Ruby looks up left to right
+-----GoodDog Lookup Path------
+GoodDog
+Swimmable
+Climbable
 # * even modules mixed in to superclasses are included in the lookup path
 
 # MORE MODULES
@@ -293,10 +301,25 @@ module Mammal
   end
 end
 buddy = Mammal::Dog.new
-# We call classes in a module by appending the class name to the module name with two colons(::)
+# We call classes & constants in a module by appending the class name to the module name with two colons(::)
 # :: - scope resolution operator - tells Ruby where to look for a specific bit of code
 #    - it's how Ruby doesn't confuse Math::PI with Circle::PI, it knows where to look for 'PI'
 # ** Built in modules that we want to use need to be explicitely brought in using 'require' (e.g. require 'date')
+# 2nd EXAMPLE of using modules to group classes
+module Forest
+  class Rock ; end
+  class Tree ; end
+  class Animal ; end # Animals can be in a forest and in a town too (see below).
+end
+# In a single script, we can't define two Animal classes (they'd clash) but we solve this issue by putting them in separate modules
+module Town
+ class Pool ; end
+ class Cinema ; end
+ class Square ; end
+ class Animal ; end
+end
+Forest::Animal.new
+Town::Animal.new
 #  TWO. using modules as a container for methods, called 'module methods'
 # -- useful for methods that seem out of place in our code
 module Mammal
@@ -366,3 +389,6 @@ puts bob.age_against(jane)
 
 # ACCIDENTAL METHOD OVERRIDING
 # Every class inherently subclasses from class Object. Familiarize yourself w/ some common Object methods to make sure you don't accidentally override them as this can have devastating consequences for your application.
+
+# FROM ZETCODE PART 2: RUBY EXCEPTIONS
+# 
