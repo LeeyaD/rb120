@@ -1,8 +1,9 @@
 # OOP - Object-Oriented Programming
-# Ruby manipulates programing constructs called 'objects'; containers of data that can be changed & manipulated w/o affecting the entire program. This programming paradigm allows developers to section off areas of code that performed certain procedures so programs can become the interaction of many small parts, as opposed to one massive blob of dependency.
+# Ruby manipulates programing constructs called 'objects'; containers of data that can be changed & manipulated w/o affecting the entire program. This programming model that allows developers to section off areas of code that performed certain procedures so programs can become the interaction of many small parts, as opposed to one massive blob of dependency.
 
-# VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changes w/o explicit intention. This ability is done by creating objects, and explosing interfaces (i.e. methods) to interact w/ those objects.
-# * - We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide? Ex. only creating a 'attr_reader' therefore, that particular atribute can't be changed, it's permanent as long the instance exists.
+# VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changed w/o explicit intention. This ability is done by creating objects, and exposing interfaces (i.e. methods) to interact w/ those objects.
+# * We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide Ex. only creating a 'attr_reader' therefore, that particular atribute can't be changed, it's permanent as long the instance exists.
+# AND by designating certain methods public, private, or protected.
 
 # VOCAB - Polymorphism: The ability for objects of different types to respond to the same method invocation.
 # in other words, in Ruby, we conentrate on the fact that methods with the same name do different things
@@ -15,21 +16,20 @@ end
 # --------Mixin: when a module is used to mix additional behavior and information into a class. Mixins allow us to customize a class without having to rewrite code.
 # EXAMPLE #
 # 'include Speak' in 'GoodDog' & 'HumanBeing' classes, instances from both classes now respond to methods within the 'Speak' module (i.e. .speak, .whisper)
-# ??? - Also used as a namespace?
 
 # OBJECTS
 # - a combination of data & methods, objs can receive messages, send messages, and process data
 # - created from classes
-# - classes are molds & OBJS the things produced from those molds
-# - Individual OBJS contain diff. info from other OBJS but they're instances of the same class
+# - classes are molds/templates & objects the things produced from those molds/templates
+# - Individual objects contain diff. info from other objs but they're instances of the same class
 
 # CLASSES
-# - defines it's objects attributes & behaviors 'aka' STATES & BEHAVIORS
+# - defines it's objects attributes (STATE) & behaviors
 #   - states track attributes for individual objects using INSTANCE variables
-#    - clearly scoped at the obj (instance)  level since each obj has them to keep track of their states
+#    - clearly scoped at the obj (instance) level since each obj has them to keep track of their states
 #   * instance var keep track of state *
 #   - behaviors are what objects can do using instance methods
-# - idea that a class groups behaviors (ie, methods)
+# - idea that a class groups behaviors (i.e. methods)
 #    - different objs that are still objs/instances of the same class have the same behavior
 #   * instance methods expose behaviors for objects *
 end
@@ -46,11 +46,7 @@ sparky = GoodDog.new # .new returns an object
 # #iniitalize is a 'constructor' in Ruby & constructors don't return any values.
 # a constructors sole purpose is to initiate the state of an object
 # 'constructor overloading' is the ability to have multiple constructors in a class.
-# * ^ Ruby doesn't allow this but we can mimic this w/ default parameters values
-
-# METHOD LOOKUP
-# Ruby has a distinct lookup path each time a method is called
-# we can use #ancestors to see the method lookup chain
+# * ^ Ruby doesn't allow this but we can mimic this w/ default parameter values
 
 # INITIALIZING A NEW OBJECT
 class GoodDog
@@ -58,7 +54,6 @@ class GoodDog
     puts "This object was initialized!"
   end
 end
-
 
 sparky = GoodDog.new # => "This object was initialized!"
 # the class method, #new, ? leads to ? the instance method, #initialize
@@ -255,7 +250,8 @@ puts sparky.speak # "Hello! from GoodDog class"
 # 3. You cannot instantiate modules (i.e., no object can be created from a module). Modules are used only for namespacing and grouping common methods together.
 
 # METHOD LOOKUP PATH
-# the order in which classes are inspected when you call a method
+# Ruby has a distinct lookup path when a method is called, we use #ancestorsto see the 'lookup chain'
+# => the order in which classes are inspected when you call a method
 class Animal
   include Walkable
 end
