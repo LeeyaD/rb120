@@ -1,6 +1,4 @@
 # OOP - Object-Oriented Programming
-# Ruby manipulates programing constructs called 'objects'; containers of data that can be changed & manipulated w/o affecting the entire program. This programming model that allows developers to section off areas of code that performed certain procedures so programs can become the interaction of many small parts, as opposed to one massive blob of dependency.
-
 # VOCAB - Encapsulation: A form of data protection. The ability to hide pieces of functionality, making it unavailable to the rest of the code base. Thus data cannot be manipulated or changed w/o explicit intention. This ability is done by creating objects, and exposing interfaces (i.e. methods) to interact w/ those objects.
 # * We create encapsulation by NOT creating methods that'll interact w/ the data we want to hide Ex. only creating a 'attr_reader' therefore, that particular atribute can't be changed, it's permanent as long the instance exists.
 # AND by designating certain methods public, private, or protected.
@@ -240,7 +238,7 @@ puts sparky.speak # "Hello! from GoodDog class"
 
 # INHERITANCE vs. MODULES
 # 2 primary ways Ruby impliments inheritance
-# - ONE. Traditional inheritance, hierarchical
+# - ONE. Traditional class based inheritance, models hierarchical domains
 # -- one type inherits the behaviors of another type, thereby specializing the type of the superclass into fine-grained, detailed behavior
 # - TWO. Interface inheritance, mixing in modules
 # -- no inheritance from another time BUT inherits the interface provided by the mixed in module. In this case, re the module, the result is not a specialized type
@@ -250,7 +248,7 @@ puts sparky.speak # "Hello! from GoodDog class"
 # 3. You cannot instantiate modules (i.e., no object can be created from a module). Modules are used only for namespacing and grouping common methods together.
 
 # METHOD LOOKUP PATH
-# Ruby has a distinct lookup path when a method is called, we use #ancestorsto see the 'lookup chain'
+# Ruby has a distinct lookup path when a method is called, we use #ancestors to see the 'lookup chain'
 # => the order in which classes are inspected when you call a method
 class Animal
   include Walkable
@@ -385,6 +383,3 @@ puts bob.age_against(jane)
 
 # ACCIDENTAL METHOD OVERRIDING
 # Every class inherently subclasses from class Object. Familiarize yourself w/ some common Object methods to make sure you don't accidentally override them as this can have devastating consequences for your application.
-
-# FROM ZETCODE PART 2: RUBY EXCEPTIONS
-# 
