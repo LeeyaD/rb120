@@ -15,106 +15,7 @@ end
 # EXAMPLE #
 # 'include Speak' in 'GoodDog' & 'HumanBeing' classes, instances from both classes now respond to methods within the 'Speak' module (i.e. .speak, .whisper)
 
-# OBJECTS
-# - a combination of data & methods, objs can receive messages, send messages, and process data
-# - created from classes
-# - classes are molds/templates & objects the things produced from those molds/templates
-# - Individual objects contain diff. info from other objs but they're instances of the same class
-
-# CLASSES
-# - defines it's objects attributes (STATE) & behaviors
-#   - states track attributes for individual objects using INSTANCE variables
-#    - clearly scoped at the obj (instance) level since each obj has them to keep track of their states
-#   * instance var keep track of state *
-#   - behaviors are what objects can do using instance methods
-# - idea that a class groups behaviors (i.e. methods)
-#    - different objs that are still objs/instances of the same class have the same behavior
-#   * instance methods expose behaviors for objects *
-end
-# * Syntax
-class GoodDog # <- CamelCase
-  # filename (snake_case) -> good_dog.rb
-end
-sparky = GoodDog.new # .new returns an object
-# 'sparky' is an "obj / instance of class 'GoodDog'" == "we instantiated an obj called 'sparky' from the class 'GoodDog'"
-
-# ** all objects of the same class have the same behaviors but different states
-
-# VOCAB - Instantiation: the entire workflow of creating a new obj / instance from a class.
-# #iniitalize is a 'constructor' in Ruby & constructors don't return any values.
-# a constructors sole purpose is to initiate the state of an object
-# 'constructor overloading' is the ability to have multiple constructors in a class.
-# * ^ Ruby doesn't allow this but we can mimic this w/ default parameter values
-
-# INITIALIZING A NEW OBJECT
-class GoodDog
-  def initialize # <- called the moment an object is created
-    puts "This object was initialized!"
-  end
-end
-
-sparky = GoodDog.new # => "This object was initialized!"
-# the class method, #new, ? leads to ? the instance method, #initialize
-
-# INSTANCE VARIABLE - @[var] ('aka' member fields)
-# - exists as long as the object (instance) exists
-# - In Ruby, they're only accessible via methods
-class GoodDog
-  def initialize(name)
-    @name = name
-  end
-end
-
-sparky = GoodDog.new("Sparky") # String obj passes from #new to #initialized where it's assigned to the local var 'name'. Our constructor then sets our instance var to name
-
-# INSTANCE METHODS - regular syntax for defining methods
-# * instance methods have access to instance variables, and so it's through instance methods that we can expose information abt the state of an obj
-
-# ACCESSOR METHODS
-# - getter method: allows us access to our obj state
-# * it's only job is to return the instance var
-def get_name
-  @name
-end
-puts sparky.get_name # => 'Sparky'
-# - setter method: allows us to change the attributes (state) of our object (instance)
-def set_name=(name)
-  @name = name
-end
-sparky.set_name = "Duke" # < syntactic sugar, Ruby knows this is a setter method (sparky.set_name=('Duke')) but allows us to use more natural assignment
-
-# ** convention dictates getter & setter methods be named after the instance variables they're exposing & setting
-def get_name -> def name
-def set_name=(name) -> def name=(n)
-
-# ** setter methods ALWAYS return the value that was passed in as an argument. Any attempt to return something else gets ignored (i.e. another last line of code in the method)
-
-# ** getter & setter methods can take up a lot of space, especially with more attributes to track. Thus, 'attr_accessor' method is used, it replaces both the getter & setter methods
-class GoodDog
-  attr_accessor :name, :multiple, :attributes
-end
-puts sparky.name
-sparky.name = "Duke"
-# 'attr_accessor' takes a symbol ':name' as an arg and creates the getter & setter methods and the instance variable
-# ex. attr_accessor :name => #name, #name=, @name
-attr_reader # if we want a getter method w/o a setter
-attr_writer # vice versa
-
-# ACCESSOR METHODS IN ACTION
-# from (rather than call our instance var directly)
-def speak
-  "#{@name} says arf!"
-end
-# to (best practice to use our getter method, thanks to 'attr_accessor' up top)
-def speak
-  "#{name} says arf!"
-end
-# 1 Use case: Say we wanted to alter the appearance of the name, '@name.upcase', we'd have to write that whereever it's used. If we decide to change it's appearance later '@name.capitalize' we'd have to go thru our code & change every occurance.
-# Had we used getter method, like below, we'd only have to change ONE place in our code
-def name
-  @name.upcase
-end
-
+# --------------------------- LEFT OFF HERE
 # CALLING METHODS W/ SELF
 def change_info(n, h, w)
   name = n
@@ -144,31 +45,6 @@ class GoodDog
   end
 end
 
-# CLASS METHODS
-# methods we can call directly on the class itself, without having to instantiate any objects
-# * Syntax:
-def self.what_am_i
-  "I'm a GoodDog class"
-end
-# where functionality that doesn't pertain to individual instances is stored
-
-# CLASS VARIABLES - @@
-# capture information pertaining to the entire class itself
-
-# THE to_s METHOD
-# an instance method that's built into every class in Ruby, it returns the string representation of the object
-# * #puts automatically calls #to_s in it's arg
-puts sparky == puts sparky.to_s
-# By default, when called on a class, #to_s returns the objects class and an encoding of the object id
-# * #puts calls #to_s on any arg that's not an array. For an array, it writes on separate lines the result of calling #to_s on each element
-# when defining a #to_s method in our class we override the #to_s instance method
-# ** #to_s is also automatically called in string interpolation
-# KNOWING when #to_s is called (#puts & string interpolation) will help us understand how to read & write better OO code
-
-# #p similar to #puts, automatically calls another built in Ruby method..#inspect
-# * #inspect is very helpful for debugging purposes so we never want to override it
-p sparky == puts sparky.inspect
-
 # MORE ABOUT 'self'
 # it can refer to different things depending on where it's referenced
 # 2 clear uses:
@@ -187,6 +63,22 @@ end
 GoodDog # => GoodDog, therefore...
 def self.class_method == def GoodDog.class_method
 # it's actually being defined on the class
+
+
+# THE to_s METHOD
+# an instance method that's built into every class in Ruby, it returns the string representation of the object
+# * #puts automatically calls #to_s in it's arg
+puts sparky == puts sparky.to_s
+# By default, when called on a class, #to_s returns the objects class and an encoding of the object id
+# * #puts calls #to_s on any arg that's not an array. For an array, it writes on separate lines the result of calling #to_s on each element
+# when defining a #to_s method in our class we override the #to_s instance method
+# ** #to_s is also automatically called in string interpolation
+# KNOWING when #to_s is called (#puts & string interpolation) will help us understand how to read & write better OO code
+
+# #p similar to #puts, automatically calls another built in Ruby method..#inspect
+# * #inspect is very helpful for debugging purposes so we never want to override it
+p sparky == puts sparky.inspect
+
 
 # INHERITANCE
 # When a class inherits the behaviors of another class, referred to as the 'superclass'. This allows us to define basic classes with larger reusability and smaller 'subclasses' for fine-grained, detailed behavior
