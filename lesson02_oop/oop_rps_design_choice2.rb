@@ -1,3 +1,10 @@
+# Compare this design with the one in the previous assignment:
+# what is the primary improvement of this new design?
+# - we utilized our Move class & it now collaborates with the Human & Computer class
+# - we cleaned up our comparison logic with #< and #>
+# what is the primary drawback of this new design?
+# - our Move class is responsible for comparing and we're not making use of our Rule class...if we even need to
+
 class Player
   attr_accessor :move, :name
 
@@ -23,10 +30,10 @@ class Human < Player
     loop do
       puts "Please choose rock, paper, or scissors:"
       choice = gets.chomp
-      break if ['rock', 'paper', 'scissors'].include? choice
+      break if Move::VALUES.include? choice
       puts "Sorry, invalid choice."
     end
-    self.move = choice
+    self.move = Move.new(choice)
   end
 end
 
@@ -36,14 +43,57 @@ class Computer < Player
   end
 
   def choose
-    self.move = ['rock', 'paper', 'scissors'].sample
+    self.move = Move.new(Move::VALUES.sample)
   end
 end
 
 class Move
-  def initialize
-    # seems like we need something to keep track of the choice...instance variable
-    # a move object can be 'paper', 'rock', or 'scissors'
+  VALUES = ['rock', 'paper', 'scissors']
+
+  def initialize(value)
+    @value = value
+  end
+
+  def scissors?
+    @value == 'scissors'
+  end
+
+  def rock?
+    @value == 'rock'
+  end
+
+  def paper?
+    @value == 'paper'
+  end
+
+  def >(other_move)
+    if rock?
+      return true if other_move.scissors?
+      return false
+    elsif paper?
+      return true if other_move.rock?
+      return false
+    elsif scissors?
+      return true if other_move.paper?
+      return false
+    end
+  end
+
+  def <(other_move)
+    if rock?
+      return true if other_move.paper?
+      return false
+    elsif paper?
+      return true if other_move.scissors?
+      return false
+    elsif scissors?
+      return true if other_move.rock?
+      return false
+    end
+  end
+
+  def to_s
+    @value
   end
 end
 
@@ -78,19 +128,12 @@ class RPSGame
     puts "#{human.name} chose: #{human.move}."
     puts "#{computer.name} chose: #{computer.move}."
 
-    case human.move
-    when 'rock'
-      puts "It's a tie" if computer.move == 'rock'
-      puts "#{human.name} won!" if computer.move == 'scissors'
-      puts "#{computer.name} won!" if computer.move == 'paper'
-    when 'paper'
-      puts "It's a tie" if computer.move == 'paper'
-      puts "#{human.name} won!" if computer.move == 'rock'
-      puts "#{computer.name} won!" if computer.move == 'scissors'
-    when 'scissors'
-      puts "It's a tie" if computer.move == 'scissors'
-      puts "#{human.name} won!" if computer.move == 'paper'
-      puts "#{computer.name} won!" if computer.move == 'rock'
+    if human.move > computer.move
+      puts "#{human.name} won!"
+    elsif human.move < computer.move
+      puts "#{computer.name} won!"
+    else
+      puts "It's a tie"
     end
   end
 
