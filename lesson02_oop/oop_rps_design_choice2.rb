@@ -1,9 +1,11 @@
 # Compare this design with the one in the previous assignment:
 # what is the primary improvement of this new design?
-# - we utilized our Move class & it now collaborates with the Human & Computer class
+# - we utilized our Move class &
+# - it now collaborates with the Human & Computer class
 # - we cleaned up our comparison logic with #< and #>
 # what is the primary drawback of this new design?
-# - our Move class is responsible for comparing and we're not making use of our Rule class...if we even need to
+# - our Move class is responsible for comparing and
+# - we're not making use of our Rule class...if we even need to
 
 class Player
   attr_accessor :move, :name
@@ -67,29 +69,15 @@ class Move
   end
 
   def >(other_move)
-    if rock?
-      return true if other_move.scissors?
-      return false
-    elsif paper?
-      return true if other_move.rock?
-      return false
-    elsif scissors?
-      return true if other_move.paper?
-      return false
-    end
+    (rock? && other_move.scissors?) ||
+      (paper? && other_move.rock?) ||
+      (scissors? && other_move.paper?)
   end
 
   def <(other_move)
-    if rock?
-      return true if other_move.paper?
-      return false
-    elsif paper?
-      return true if other_move.scissors?
-      return false
-    elsif scissors?
-      return true if other_move.rock?
-      return false
-    end
+    (rock? && other_move.paper?) ||
+      (paper? && other_move.scissors?) ||
+      (scissors? && other_move.rock?)
   end
 
   def to_s
@@ -103,10 +91,9 @@ class Rule
   end
 end
 
-#not sure where #compare goes yet...a module if I can't think of anything else...
-def compare(move1, move2)
-
-end
+# not sure where #compare goes yet
+# def compare(move1, move2)
+# end
 
 class RPSGame
   attr_accessor :human, :computer
@@ -124,10 +111,12 @@ class RPSGame
     puts "Thanks for playing. Good bye!"
   end
 
-  def display_winner
+  def display_moves
     puts "#{human.name} chose: #{human.move}."
     puts "#{computer.name} chose: #{computer.move}."
+  end
 
+  def display_winner
     if human.move > computer.move
       puts "#{human.name} won!"
     elsif human.move < computer.move
@@ -141,19 +130,21 @@ class RPSGame
     answer = nil
     loop do
       puts "Would you like to play again? (y/n)"
-      answer = gets.chomp
+      answer = gets.chomp.strip.downcase
       break if ['y', 'n'].include? answer.downcase
       puts "Sorry, must be y or n."
     end
+
+    return false if answer == 'n'
     return true if answer == 'y'
-    return false
   end
 
   def play
     display_welcome_message
-      loop do
+    loop do
       human.choose
       computer.choose
+      display_moves
       display_winner
       break unless play_again?
     end
