@@ -23,9 +23,9 @@
 # - - Can add state to our class Scoreboard in the future should we want to keep track of winners & their scores
 # - - Can format & display all scores
 class Score
-  # has scores
+  # has a scoreboard
   # - scoreboard is created at start of game when player objects are created?
-  # - - hash: player objects the keys, scores the values
+  # - - hash: player names the keys, scores the values
   # has a winner
   def add_point; end # increase 
 
@@ -58,3 +58,16 @@ class Player
 end
 
 # 5. When you have a better idea of the problem, model thoughts into CRC Cards (optional)
+class Score
+  attr_reader :human, :computer
+  # has scores; human & computer objects
+
+  # can increase (scores)
+  def add_point; end
+
+  # can display (scores)
+  def display; end
+
+  # can reset (scores)
+  def reset; end
+end

@@ -77,7 +77,7 @@ class Move
 end
 
 class RPSGame
-  attr_accessor :human, :computer
+  attr_accessor :human, :computer, :score
 
   def initialize
     @human = Human.new
