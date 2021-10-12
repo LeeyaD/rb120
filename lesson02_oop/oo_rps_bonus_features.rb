@@ -76,12 +76,41 @@ class Move
   end
 end
 
+class Score
+  attr_reader :board, :human, :computer
+  
+  def initialize(human, computer)
+    @human = human
+    @computer = computer
+    set_board
+  end
+
+  def set_board
+    @board = {"#{@human}": 0, "#{@computer}": 0}
+  end
+  # can increase (scores)
+  def add_point; end
+
+  # can display (scores)
+  def display
+    puts board
+  end
+
+  # can reset (scores)
+  def reset; end
+end
+
 class RPSGame
   attr_accessor :human, :computer, :score
 
   def initialize
     @human = Human.new
     @computer = Computer.new
+    set_score
+  end
+
+  def set_score
+    @score = Score.new(human.name, computer.name)
   end
 
   def display_welcome_message
@@ -107,6 +136,10 @@ class RPSGame
     end
   end
 
+  def display_score
+    score.display
+  end
+
   def play_again?
     answer = nil
     loop do
@@ -127,6 +160,7 @@ class RPSGame
       computer.choose
       display_moves
       display_winner
+      display_score
       break unless play_again?
     end
     display_goodbye_message
