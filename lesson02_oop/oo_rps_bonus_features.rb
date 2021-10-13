@@ -11,7 +11,7 @@ class Human < Player
     n = ""
     loop do
       puts "What's your name?"
-      n = gets.chomp
+      n = gets.chomp.strip.capitalize
       break unless n.empty?
       puts "Sorry, must enter a value."
     end
@@ -77,6 +77,8 @@ class Move
 end
 
 class Score
+  WINS = 2 #change to 10 wins when you're done
+
   attr_reader :board, :human, :computer
   
   def initialize(human, computer)
@@ -91,12 +93,14 @@ class Score
   # can increase (scores)
   def add_point; end
 
-  # can display (scores)
   def display
-    puts board
+    puts "The current score is..."
+    board.each do |name, point|
+      sleep 1
+      puts "#{name}: #{point}"
+    end
   end
 
-  # can reset (scores)
   def reset; end
 end
 
