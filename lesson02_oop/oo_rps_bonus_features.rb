@@ -1,3 +1,6 @@
+require 'pry'
+require 'pry-byebug'
+
 class Player
   attr_accessor :move, :name
 
@@ -77,7 +80,7 @@ class Move
 end
 
 class Score
-  WINS = 2 #change to 10 wins when you're done
+  WINS = 2 #change to 10 wins when you're done w/ assignment
 
   attr_reader :board, :human, :computer
   
@@ -88,10 +91,12 @@ class Score
   end
 
   def set_board
-    @board = {"#{@human}": 0, "#{@computer}": 0}
+    @board = { "#{human}": 0, "#{computer}": 0 }
   end
-  # can increase (scores)
-  def add_point; end
+
+  def update(winner) 
+    board[winner] += 1 if winner
+  end
 
   def display
     puts "The current score is..."
@@ -101,19 +106,21 @@ class Score
     end
   end
 
-  def reset; end
+  def reset
+    @board = { "#{human}": 0, "#{computer}": 0 }
+  end
 end
 
 class RPSGame
-  attr_accessor :human, :computer, :score
+  attr_accessor :human, :computer, :score, :winner, :grand_winner
 
   def initialize
     @human = Human.new
     @computer = Computer.new
-    set_score
+    new_scoreboard
   end
 
-  def set_score
+  def new_scoreboard
     @score = Score.new(human.name, computer.name)
   end
 
@@ -130,18 +137,27 @@ class RPSGame
     puts "#{computer.name} chose: #{computer.move}."
   end
 
-  def display_winner
+  def find_winner
+    self.winner = nil
     if human.move > computer.move
-      puts "#{human.name} won!"
+      self.winner = human.name.to_sym
     elsif human.move < computer.move
-      puts "#{computer.name} won!"
-    else
-      puts "It's a tie"
+      self.winner = computer.name.to_sym
     end
   end
 
-  def display_score
-    score.display
+  def display_winner
+    puts winner ? "#{winner} won!" : "It's a tie!"
+  end
+
+  def find_grand_winner
+    self.grand_winner = score.board.key(Score::WINS)
+  end
+
+  def display_grand_winner
+    if grand_winner
+      puts "#{grand_winner} is the grand winner with a score of #{Score::WINS}!"
+    end
   end
 
   def play_again?
@@ -163,8 +179,13 @@ class RPSGame
       human.choose
       computer.choose
       display_moves
+      find_winner
       display_winner
-      display_score
+      score.update(winner)
+      score.display
+      find_grand_winner
+      display_grand_winner
+      score.reset if grand_winner
       break unless play_again?
     end
     display_goodbye_message
