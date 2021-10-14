@@ -90,10 +90,10 @@ class Move
 end
 
 class Score
-  WINS = 2 #change to 10 wins when you're done w/ assignment
+  WINS = 2 # change to 10 wins when you're done w/ assignment
 
   attr_reader :board
-  
+
   def initialize(human, computer)
     @human = human
     @computer = computer
@@ -104,13 +104,14 @@ class Score
     self.board = { "#{human}": 0, "#{computer}": 0 }
   end
 
-  def update(winner) 
+  def update(winner)
     board[winner] += 1 if winner
   end
 
   def display
     puts "The current score is..."
-    puts "#{human}: #{board[human.to_sym]} | #{computer}: #{board[computer.to_sym]}"
+    puts "#{human}: #{board[human.to_sym]} | " \
+    "#{computer}: #{board[computer.to_sym]}"
   end
 
   private
@@ -125,20 +126,25 @@ class RPSGame
     @computer = Computer.new
     @score = Score.new(human.name, computer.name)
   end
-  
+
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
   end
-  
+
+  def players_move
+    human.choose
+    computer.choose
+  end
+
   def display_goodbye_message
     puts "Thanks for playing. Good bye!"
   end
-  
+
   def display_moves
     puts "#{human.name} chose: #{human.move}."
     puts "#{computer.name} chose: #{computer.move}."
   end
-  
+
   def find_winner
     self.winner = nil
     if human.move > computer.move
@@ -147,21 +153,36 @@ class RPSGame
       self.winner = computer.name.to_sym
     end
   end
-  
+
   def display_winner
     puts winner ? "#{winner} won!" : "It's a tie!"
   end
-  
+
   def find_grand_winner
     self.grand_winner = score.board.key(Score::WINS)
   end
-  
+
   def display_grand_winner
-    if grand_winner
-      puts "#{grand_winner} is the grand winner with a score of #{Score::WINS}!"
-    end
+    puts "#{grand_winner} is the grand winner with a score of #{Score::WINS}!"
   end
-  
+
+  def winner_sequence
+    find_winner
+    display_winner
+  end
+
+  def grand_winner_sequence
+    find_grand_winner
+
+    display_grand_winner if grand_winner
+    score.set_board if grand_winner
+  end
+
+  def score_sequence
+    score.update(winner)
+    score.display
+  end
+
   def play_again?
     answer = nil
     loop do
@@ -170,24 +191,19 @@ class RPSGame
       break if ['y', 'n'].include? answer.downcase
       puts "Sorry, must be y or n."
     end
-    
+
     return false if answer == 'n'
     return true if answer == 'y'
   end
-  
+
   def play
     display_welcome_message
     loop do
-      human.choose
-      computer.choose
+      players_move
       display_moves
-      find_winner
-      display_winner
-      score.update(winner)
-      score.display
-      find_grand_winner
-      display_grand_winner
-      score.set_board if grand_winner
+      winner_sequence
+      score_sequence
+      grand_winner_sequence
       break unless play_again?
     end
     display_goodbye_message

@@ -1,9 +1,8 @@
 # Computer personalities
 # Keep track of a history of moves
 # Add a class for each move
+
 # Add Lizard & Spock
-
-
 
 # 1. Write a textual description of the program or exercise.
 
