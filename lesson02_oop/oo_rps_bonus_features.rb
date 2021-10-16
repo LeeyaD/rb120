@@ -28,7 +28,7 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      puts "Please choose rock, paper, or scissors:"
+      puts "Please choose rock, paper, scissors:"
       choice = gets.chomp
       break if Move::VALUES.include? choice
       puts "Sorry, invalid choice."

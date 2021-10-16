@@ -5,7 +5,7 @@
 # Add Lizard & Spock
 
 # 1. Write a textual description of the program or exercise.
-
+# Add 2 more moves to the game in the same
 
 # 2. Extract the major nouns and verbs from the description.
 
