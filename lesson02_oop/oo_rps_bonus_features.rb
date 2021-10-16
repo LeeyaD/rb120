@@ -28,8 +28,8 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      puts "Please choose rock, paper, scissors:"
-      choice = gets.chomp
+      puts "Please choose rock, paper, scissors, lizard, spock:"
+      choice = gets.chomp.strip.downcase.to_sym
       break if Move::VALUES.include? choice
       puts "Sorry, invalid choice."
     end
@@ -44,44 +44,43 @@ class Computer < Player
 
   def choose
     self.move = Move.new(Move::VALUES.sample)
+    # self.move = Move.new(Move::VALUES.values.sample)
   end
 end
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors']
+  VALUES = [:rock, :paper, :scissors, :lizard, :spock]
+
+  WINNING_MOVES = {
+    rock: ['scissors', 'lizard'],
+    paper: ['rock', 'spock'],
+    scissors: ['paper', 'lizard'],
+    lizard: ['spock', 'paper'],
+    spock: ['rock', 'scissors']
+  }
+
+  LOSING_MOVES = {
+    rock: ['paper', 'spock'],
+    paper: ['lizard', 'scissors'],
+    scissors: ['rock', 'spock'],
+    lizard: ['scissors', 'rock'],
+    spock: ['lizard', 'paper']
+  }
 
   def initialize(value)
     @value = value
   end
 
   def >(other_move)
-    (rock? && other_move.scissors?) ||
-      (paper? && other_move.rock?) ||
-      (scissors? && other_move.paper?)
+    WINNING_MOVES[value].include?(other_move.to_s)
   end
 
   def <(other_move)
-    (rock? && other_move.paper?) ||
-      (paper? && other_move.scissors?) ||
-      (scissors? && other_move.rock?)
+    LOSING_MOVES[value].include?(other_move.to_s)
   end
 
   def to_s
-    value
-  end
-
-  protected
-
-  def scissors?
-    value == 'scissors'
-  end
-
-  def rock?
-    value == 'rock'
-  end
-
-  def paper?
-    value == 'paper'
+    value.to_s
   end
 
   private
