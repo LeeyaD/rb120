@@ -30,10 +30,10 @@ class Human < Player
     loop do
       puts "Please choose rock, paper, scissors, lizard, spock:"
       choice = gets.chomp.strip.downcase.to_sym
-      break if Move::VALUES.include? choice
+      break if RPSGame::MOVES.keys.include? choice
       puts "Sorry, invalid choice."
     end
-    self.move = Move.new(choice)
+    self.move = RPSGame::MOVES[choice]
   end
 end
 
@@ -43,49 +43,86 @@ class Computer < Player
   end
 
   def choose
-    self.move = Move.new(Move::VALUES.sample)
-    # self.move = Move.new(Move::VALUES.values.sample)
+    self.move = RPSGame::MOVES.values.sample
   end
 end
 
 class Move
-  VALUES = [:rock, :paper, :scissors, :lizard, :spock]
+  attr_reader :value
 
-  WINNING_MOVES = {
-    rock: ['scissors', 'lizard'],
-    paper: ['rock', 'spock'],
-    scissors: ['paper', 'lizard'],
-    lizard: ['spock', 'paper'],
-    spock: ['rock', 'scissors']
-  }
+  def to_s
+    value
+  end
+end
 
-  LOSING_MOVES = {
-    rock: ['paper', 'spock'],
-    paper: ['lizard', 'scissors'],
-    scissors: ['rock', 'spock'],
-    lizard: ['scissors', 'rock'],
-    spock: ['lizard', 'paper']
-  }
-
-  def initialize(value)
-    @value = value
+class Rock < Move
+  def initialize
+    @value = 'rock'
   end
 
   def >(other_move)
-    WINNING_MOVES[value].include?(other_move.to_s)
+    ['scissors', 'lizard'].include?(other_move.value)
   end
 
   def <(other_move)
-    LOSING_MOVES[value].include?(other_move.to_s)
+    ['paper', 'spock'].include?(other_move.value)
+  end
+end
+
+class Paper < Move
+  def initialize
+    @value = 'paper'
   end
 
-  def to_s
-    value.to_s
+  def >(other_move)
+    ['rock', 'spock'].include?(other_move.value)
   end
 
-  private
+  def <(other_move)
+    ['scissors', 'lizard'].include?(other_move.value)
+  end
+end
 
-  attr_reader :value
+class Scissors < Move
+  def initialize
+    @value = 'scissors'
+  end
+
+  def >(other_move)
+    ['paper', 'lizard'].include?(other_move.value)
+  end
+
+  def <(other_move)
+    ['rock', 'spock'].include?(other_move.value)
+  end
+end
+
+class Lizard < Move
+  def initialize
+    @value = 'lizard'
+  end
+
+  def >(other_move)
+    ['paper', 'spock'].include?(other_move.value)
+  end
+
+  def <(other_move)
+    ['scissors', 'rock'].include?(other_move.value)
+  end
+end
+
+class Spock < Move
+  def initialize
+    @value = 'spock'
+  end
+
+  def >(other_move)
+    ['scissors', 'rock'].include?(other_move.value)
+  end
+
+  def <(other_move)
+    ['paper', 'lizard'].include?(other_move.value)
+  end
 end
 
 class Score
@@ -120,6 +157,17 @@ class Score
 end
 
 class RPSGame
+  rock = Rock.new
+  paper = Paper.new
+  scissors = Scissors.new
+  lizard = Lizard.new
+  spock = Spock.new
+
+  MOVES = { 
+    rock: rock, paper: paper, scissors: scissors, 
+    lizard: lizard, spock: spock
+  }
+
   def initialize
     @human = Human.new
     @computer = Computer.new
