@@ -22,24 +22,45 @@
 #  - #track
 
 # 4. Do a spike to explore the problem w/ temporary code
-class RPSGame
-  history_of_moves = { human.name: [], computer.name: [] }
-  def track_moves
-    history_of_moves[human.name] << human.move.value
-    history_of_moves[computer.name] << computer.move.value
-  end
+# class RPSGame
+#   history_of_moves = { human.name: [], computer.name: [] }
+#   def track_moves
+#     history_of_moves[human.name] << human.move.value
+#     history_of_moves[computer.name] << computer.move.value
+#   end
 
-  def display_history_of_moves
-    puts "|    #{human.name}     |    #{computer.name}    |"
-    puts "|    #{history[human.name][0]}     |    #{history[computer.name][0]}    |"
+#   def display_history_of_moves
+#     puts "|    #{human.name}     |    #{computer.name}    |"
+#     puts "|    #{history[human.name][0]}     |    #{history[computer.name][0]}    |"
     
-    human_history = history_of_moves[human.name]
-    computer_history = history_of_moves[computer.name]
-    0.upto(human_history.size) do |idx|
-      puts "|    #{human_history[idx]}     |    #{computer_history[idx]}    |"
-    end
+#     human_history = history_of_moves[human.name]
+#     computer_history = history_of_moves[computer.name]
+#     0.upto(human_history.size) do |idx|
+#       puts "|    #{human_history[idx]}     |    #{computer_history[idx]}    |"
+#     end
+#   end
+# end
+
+# 5. When you have a better idea of the problem, model thoughts into CRC Cards (optional)
+def display_history_of_moves
+  human = 'Leeya'
+  computer = 'Hal'
+  history_of_moves = { 
+  'Leeya' => ['rock', 'scissors', 'lizard'], 
+  'Hal' => ['scissors', 'paper', 'spock'] 
+}
+  human_history = history_of_moves['Leeya']
+  computer_history = history_of_moves['Hal']
+
+  puts "| #{human}" + (" " * (15 - human.size)) + "| #{computer}" + (" " * (15 - computer.size)) + "|"
+  puts "| " + ("-" * 15) + "| " + ("-" * 15) + "|"
+
+  0.upto(human_history.size - 1) do |idx|
+    human_move = human_history[idx]
+    computer_move = computer_history[idx]
+
+    puts "| #{human_move}" + (" " * (15 - human_move.size)) + "| #{computer_move}" + (" " * (15 - computer_move.size)) + "|"
   end
 end
 
-# 5. When you have a better idea of the problem, model thoughts into CRC Cards (optional)
-
+display_history_of_moves

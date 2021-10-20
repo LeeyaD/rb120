@@ -1,5 +1,26 @@
 require 'pry'
 require 'pry-byebug'
+module GamePlay
+  def clear_screen
+    system 'clear'
+  end
+
+  def return_to_continue
+    puts ""
+    puts "Press 'enter' to continue"
+    gets
+    clear_screen
+  end
+
+  def pause(num)
+    sleep num
+  end
+
+  def pause_and_clear(num)
+    pause(num)
+    clear_screen
+  end
+end
 
 class Player
   attr_reader :move, :name
@@ -171,30 +192,64 @@ class Score
 end
 
 class RPSGame
+  include GamePlay
+
   rock = Rock.new
   paper = Paper.new
   scissors = Scissors.new
   lizard = Lizard.new
   spock = Spock.new
-
+  
   MOVES = {
     rock: rock, paper: paper, scissors: scissors,
     lizard: lizard, spock: spock
   }
 
   def initialize
+    clear_screen
     @human = Human.new
     @computer = Computer.new
     @score = Score.new(human.name, computer.name)
+    @history_of_moves = { (human.name) => [], (computer.name) => [] }
   end
-
+  
+  
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors, Lizard, Spock!"
   end
-
+  
   def players_move
     human.choose
     computer.choose
+  end
+  
+  def track_moves
+    history_of_moves[human.name] << human.move.value
+    history_of_moves[computer.name] << computer.move.value
+  end
+
+  def display_history_of_moves_header
+    puts "| #{human.name}" + (" " * (15 - (human.name).size)) + 
+    "| #{computer.name}" + (" " * (15 - (computer.name).size)) + "|"
+    puts "| " + ("-" * 15) + "| " + ("-" * 15) + "|"
+  end
+
+  def display_history_of_moves_table
+    human_history = history_of_moves[human.name]
+    computer_history = history_of_moves[computer.name]
+
+    0.upto(human_history.size - 1) do |idx|
+      human_move = human_history[idx]
+      computer_move = computer_history[idx]
+  
+      puts "| #{human_move}" + (" " * (15 - human_move.size)) + 
+           "| #{computer_move}" + (" " * (15 - computer_move.size)) + "|"
+    end
+  end
+
+  def display_history_of_moves_
+    display_history_of_moves_header
+    display_history_of_moves_table
   end
 
   def display_goodbye_message
@@ -244,6 +299,12 @@ class RPSGame
     score.display
   end
 
+  def move_sequence
+    players_move
+    track_moves
+    display_moves
+  end
+
   def play_again?
     answer = nil
     loop do
@@ -258,21 +319,23 @@ class RPSGame
   end
 
   def play
+    pause_and_clear(1)
     display_welcome_message
+    return_to_continue
     loop do
-      players_move
-      display_moves
+      move_sequence
       winner_sequence
       score_sequence
       grand_winner_sequence
       break unless play_again?
+      display_history_of_moves
     end
     display_goodbye_message
   end
 
   private
 
-  attr_accessor :human, :computer, :score, :winner, :grand_winner
+  attr_accessor :human, :computer, :score, :winner, :grand_winner, :history_of_moves
 end
 
 RPSGame.new.play
