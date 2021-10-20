@@ -2,48 +2,44 @@
 # the state is pretty clear...for example class Rock -> Rock#name => 'rock' can't be anything else
 
 # Keep track of a history of moves
-# As long as the user doesn't quit, keep track of a history of moves by both the human and computer. What data structure will you reach for? Will you use a new class, or an existing class? What will the display output look like?
+# As long as the user doesn't quit, keep track of a history of moves by both the human and computer. 
+# What data structure will you reach for? A hash; keys are the player & computer names, values are the moves they've made in the game
+# history = { player: [rock, paper], computer: [paper, scissors] }
+# Will you use a new class, or an existing class? The existing class Move
+# What will the display output look like? (rock 4, paper/spock 5, lizard 6, scissors 8)
+# > a table with 2 columns, headers are the players' names, each column width is 19 (|--------|--------|), with the move centered
 
 # 1. Write a textual description of the program or exercise.
-
+# As long as the user doesn't quit, keep track of a history of moves by both the human and computer.
 
 # 2. Extract the major nouns and verbs from the description.
-# Nouns: 
-# Verbs: 
+# Nouns: history, moves
+# Verbs: track
 
 # 3. Organize and associate the verbs with the nouns (nouns -> classes | verbs -> methods)
-# Computer
-
+# Moves
+#  - history
+#  - #track
 
 # 4. Do a spike to explore the problem w/ temporary code
+class RPSGame
+  history_of_moves = { human.name: [], computer.name: [] }
+  def track_moves
+    history_of_moves[human.name] << human.move.value
+    history_of_moves[computer.name] << computer.move.value
+  end
 
+  def display_history_of_moves
+    puts "|    #{human.name}     |    #{computer.name}    |"
+    puts "|    #{history[human.name][0]}     |    #{history[computer.name][0]}    |"
+    
+    human_history = history_of_moves[human.name]
+    computer_history = history_of_moves[computer.name]
+    0.upto(human_history.size) do |idx|
+      puts "|    #{human_history[idx]}     |    #{computer_history[idx]}    |"
+    end
+  end
+end
 
 # 5. When you have a better idea of the problem, model thoughts into CRC Cards (optional)
 
-class Move
-  def initialize(value)
-    @value = value
-  end
-
-  def to_s
-    value.to_s
-  end
-
-  protected
-
-  attr_reader :value
-end
-
-class Rock < Move
-  def >(other_move)
-    ['scissors', 'lizard'].include?(other_move.value)
-  end
-
-  def <(other_move)
-    LOSING_MOVES[value].include?(other_move.to_s)
-  end
-end
-class Paper < Move; end
-class Scissors < Move; end
-class Lizard < Move; end
-class Spock < Move; end
