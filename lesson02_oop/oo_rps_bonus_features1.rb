@@ -47,6 +47,11 @@ class Computer < Player
   end
 end
 
+class R2D2; end
+class Hall; end
+class Number5; end
+class Chappie; end
+
 class Move
   attr_reader :value
 
