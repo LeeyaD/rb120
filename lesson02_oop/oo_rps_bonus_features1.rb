@@ -38,19 +38,28 @@ class Human < Player
 end
 
 class Computer < Player
+  PERSONALITIES = {
+    'R2D2' => { rock: 1 },
+    'Hal' => { scissors: 4, lizard: 2, spock: 2, rock: 1 },
+    'Number 5' => { scissors: 1, lizard: 2, spock: 2, rock: 1, paper: 1 },
+    'Chappie' => { scissors: 1, lizard: 1, spock: 1, rock: 1, paper: 1 }
+  }
+
   def set_name
     self.name = ['R2D2', 'Hal', 'Number 5', 'Chappie'].sample
   end
 
   def choose
-    self.move = RPSGame::MOVES.values.sample
+    choice = choices.sample
+    self.move = RPSGame::MOVES[choice]
+  end
+
+  def choices
+    PERSONALITIES[name].each_with_object([]) do |(move, frequency), array|
+      array << Array.new(frequency, move)
+    end.flatten
   end
 end
-
-class R2D2; end
-class Hall; end
-class Number5; end
-class Chappie; end
 
 class Move
   attr_reader :value
@@ -168,8 +177,8 @@ class RPSGame
   lizard = Lizard.new
   spock = Spock.new
 
-  MOVES = { 
-    rock: rock, paper: paper, scissors: scissors, 
+  MOVES = {
+    rock: rock, paper: paper, scissors: scissors,
     lizard: lizard, spock: spock
   }
 
