@@ -199,7 +199,7 @@ class RPSGame
   scissors = Scissors.new
   lizard = Lizard.new
   spock = Spock.new
-  
+
   MOVES = {
     rock: rock, paper: paper, scissors: scissors,
     lizard: lizard, spock: spock
@@ -210,46 +210,70 @@ class RPSGame
     @human = Human.new
     @computer = Computer.new
     @score = Score.new(human.name, computer.name)
-    @history_of_moves = { (human.name) => [], (computer.name) => [] }
+    @history_of_moves = { human.name => [], computer.name => [] }
   end
-  
-  
+
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors, Lizard, Spock!"
   end
-  
+
+  def show_rules?
+    puts "Would you like to see the rules?"
+    answer = gets.chomp.strip.downcase
+    ['y', 'yes'].include?(answer) || answer == "\r"
+  end
+
+  def show_rules
+    clear_screen
+    rules = <<-RULES
+    It's just like the classic Rock, Paper, Scissors game but with a twist!
+    
+    Here's how to win:
+    > Rock crushes lizard and breaks scissors
+    > Paper covers rock and disproves Spock
+    > Scissors cuts paper and decapitates lizard
+    > Lizard eats paper and poisons Spock
+    > Spock smashes scissors and vaporizes rock
+    RULES
+    puts rules
+    return_to_continue
+  end
+
   def players_move
     human.choose
     computer.choose
   end
-  
-  def track_moves
+
+  def update_move_history
     history_of_moves[human.name] << human.move.value
     history_of_moves[computer.name] << computer.move.value
   end
 
-  def display_history_of_moves_header
-    puts "| #{human.name}" + (" " * (15 - (human.name).size)) + 
-    "| #{computer.name}" + (" " * (15 - (computer.name).size)) + "|"
+  def display_history_header
+    human_name = human.name
+    computer_name = computer.name
+
+    puts "| #{human_name}" + (" " * (15 - (human_name).size)) +
+         "| #{computer_name}" + (" " * (15 - (computer_name).size)) + "|"
     puts "| " + ("-" * 15) + "| " + ("-" * 15) + "|"
   end
 
-  def display_history_of_moves_table
+  def display_history_data
     human_history = history_of_moves[human.name]
     computer_history = history_of_moves[computer.name]
 
     0.upto(human_history.size - 1) do |idx|
       human_move = human_history[idx]
       computer_move = computer_history[idx]
-  
-      puts "| #{human_move}" + (" " * (15 - human_move.size)) + 
+
+      puts "| #{human_move}" + (" " * (15 - human_move.size)) +
            "| #{computer_move}" + (" " * (15 - computer_move.size)) + "|"
     end
   end
 
-  def display_history_of_moves_
-    display_history_of_moves_header
-    display_history_of_moves_table
+  def display_history_table
+    display_history_header
+    display_history_data
   end
 
   def display_goodbye_message
@@ -301,8 +325,14 @@ class RPSGame
 
   def move_sequence
     players_move
-    track_moves
+    update_move_history
     display_moves
+  end
+
+  def welcome_sequence
+    pause_and_clear(1)
+    display_welcome_message
+    show_rules if show_rules?
   end
 
   def play_again?
@@ -318,24 +348,27 @@ class RPSGame
     return true if answer == 'y'
   end
 
+  def game_play_sequence
+    move_sequence
+    winner_sequence
+    score_sequence
+  end
+
   def play
-    pause_and_clear(1)
-    display_welcome_message
-    return_to_continue
+    welcome_sequence
     loop do
-      move_sequence
-      winner_sequence
-      score_sequence
+      game_play_sequence
       grand_winner_sequence
       break unless play_again?
-      display_history_of_moves
+      display_history_table
     end
     display_goodbye_message
   end
 
   private
 
-  attr_accessor :human, :computer, :score, :winner, :grand_winner, :history_of_moves
+  attr_accessor :human, :computer, :score, :winner,
+                :grand_winner, :history_of_moves
 end
 
 RPSGame.new.play
