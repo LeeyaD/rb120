@@ -1,10 +1,10 @@
 require 'yaml'
-require 'pry'
-require 'pry-byebug'
 
 MESSAGES = YAML.load_file('oo_rps_messages.yml')
 
 module GamePlay
+  private
+
   def messages(message)
     MESSAGES[message]
   end
@@ -31,6 +31,8 @@ module GamePlay
 end
 
 module Memorable
+  private
+
   DISPLAY_LENGTH = 15
 
   def update_move_history
@@ -75,6 +77,25 @@ module Memorable
 
     puts history_header
     display_history_data(human_history, computer_history)
+    return_to_continue
+  end
+
+  def see_history?
+    answer = nil
+
+    loop do
+      puts "Would you like to see a history of moves made? (y/n)"
+      answer = gets.chomp.strip.downcase
+      break if ['y', 'n'].include? answer
+      puts "Sorry, answer must be a y or n."
+    end
+
+    return true if answer == 'y'
+    return false if answer == 'n'
+  end
+
+  def reset_move_history
+    self.history_of_moves = { human.name => [], computer.name => [] }
   end
 end
 
@@ -97,7 +118,7 @@ class Human < Player
       puts "What's your name?"
       n = gets.chomp.strip.capitalize
       break unless n.empty?
-      puts "Sorry, must enter a value."
+      puts "Sorry, you must enter a value."
     end
     self.name = n
   end
@@ -217,7 +238,9 @@ class Spock < Move
 end
 
 class Score
-  WINS = 2 # change to 10 wins when you're done w/ assignment
+  include GamePlay
+
+  WINS = 3
 
   attr_reader :board
 
@@ -237,8 +260,10 @@ class Score
 
   def display
     puts "The current score is..."
+    pause(1)
     puts "#{human}: #{board[human.to_sym]} | " \
     "#{computer}: #{board[computer.to_sym]}"
+    puts ""
   end
 
   private
@@ -272,6 +297,7 @@ class RPSGame
 
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors, Lizard, Spock!"
+    puts ""
   end
 
   def show_rules?
@@ -297,7 +323,9 @@ class RPSGame
 
   def display_moves
     puts "#{human.name} chose: #{human.move}."
+    pause(1)
     puts "#{computer.name} chose: #{computer.move}."
+    puts ""
   end
 
   def find_winner
@@ -311,6 +339,7 @@ class RPSGame
 
   def display_winner
     puts winner ? "#{winner} won!" : "It's a tie!"
+    puts ""
   end
 
   def find_grand_winner
@@ -318,10 +347,13 @@ class RPSGame
   end
 
   def display_grand_winner
+    puts ""
     puts "#{grand_winner} is the grand winner with a score of #{Score::WINS}!"
+    puts ""
   end
 
   def winner_sequence
+    pause(1)
     find_winner
     display_winner
   end
@@ -330,17 +362,23 @@ class RPSGame
     find_grand_winner
 
     display_grand_winner if grand_winner
+    display_history_table if see_history?
+
     score.set_board if grand_winner
+    reset_move_history if grand_winner
   end
 
   def score_sequence
+    return_to_continue
     score.update(winner)
     score.display
   end
 
   def move_sequence
+    clear_screen
     players_move
     update_move_history
+    pause_and_clear(1)
     display_moves
   end
 
@@ -367,6 +405,7 @@ class RPSGame
     move_sequence
     winner_sequence
     score_sequence
+    return_to_continue
   end
 
   def play
@@ -375,7 +414,6 @@ class RPSGame
       game_play_sequence
       grand_winner_sequence
       break unless play_again?
-      display_history_table
     end
     display_goodbye_message
   end

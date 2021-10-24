@@ -89,4 +89,18 @@ module Memorable
     puts history_header
     display_history_data(human_history, computer_history)
   end
+
+  def see_history?
+    answer = nil
+
+    loop do
+      puts "Would you like to see a history of moves made? (y/n)"
+      answer = gets.chomp.strip.downcase
+      break if ['y', 'n'].include? answer
+      puts "Sorry, answer must be a y or n."
+    end
+
+    return true if answer == 'y'
+    return false if answer == 'n'
+  end
 end
