@@ -42,25 +42,51 @@
 # end
 
 # 5. When you have a better idea of the problem, model thoughts into CRC Cards (optional)
-def display_history_of_moves
-  human = 'Leeya'
-  computer = 'Hal'
-  history_of_moves = { 
-  'Leeya' => ['rock', 'scissors', 'lizard'], 
-  'Hal' => ['scissors', 'paper', 'spock'] 
-}
-  human_history = history_of_moves['Leeya']
-  computer_history = history_of_moves['Hal']
+@history_of_moves = { human.name => [], computer.name => [] }
+module Memorable
+  DISPLAY_LENGTH = 15
 
-  puts "| #{human}" + (" " * (15 - human.size)) + "| #{computer}" + (" " * (15 - computer.size)) + "|"
-  puts "| " + ("-" * 15) + "| " + ("-" * 15) + "|"
+  def update_move_history
+    history_of_moves[human.name] << human.move.value
+    history_of_moves[computer.name] << computer.move.value
+  end
 
-  0.upto(human_history.size - 1) do |idx|
-    human_move = human_history[idx]
-    computer_move = computer_history[idx]
+  def padding(num)
+    " " * (DISPLAY_LENGTH - num)
+  end
 
-    puts "| #{human_move}" + (" " * (15 - human_move.size)) + "| #{computer_move}" + (" " * (15 - computer_move.size)) + "|"
+  def dashes
+    "-" * DISPLAY_LENGTH
+  end
+
+  def history_header
+    human_name = human.name
+    computer_name = computer.name
+
+    header_info = <<~HEREDOCS
+    | #{human_name}#{padding(human_name.size)}| #{computer_name}#{padding(computer_name.size)}|
+    | #{dashes}| #{dashes}|
+    HEREDOCS
+
+    header_info
+  end
+
+  def display_history_data(human, computer)
+    0.upto(human.size - 1) do |idx|
+      human_move = human[idx]
+      computer_move = computer[idx]
+
+      puts <<~HEREDOCS
+      | #{human_move}#{padding(human_move.size)}| #{computer_move}#{padding(computer_move.size)}|
+      HEREDOCS
+    end
+  end
+
+  def display_history_table
+    human_history = history_of_moves[human.name]
+    computer_history = history_of_moves[computer.name]
+    
+    puts history_header
+    display_history_data(human_history, computer_history)
   end
 end
-
-display_history_of_moves

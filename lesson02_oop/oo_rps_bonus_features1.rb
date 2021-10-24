@@ -1,6 +1,14 @@
+require 'yaml'
 require 'pry'
 require 'pry-byebug'
+
+MESSAGES = YAML.load_file('oo_rps_messages.yml')
+
 module GamePlay
+  def messages(message)
+    MESSAGES[message]
+  end
+
   def clear_screen
     system 'clear'
   end
@@ -19,6 +27,54 @@ module GamePlay
   def pause_and_clear(num)
     pause(num)
     clear_screen
+  end
+end
+
+module Memorable
+  DISPLAY_LENGTH = 15
+
+  def update_move_history
+    history_of_moves[human.name] << human.move.value
+    history_of_moves[computer.name] << computer.move.value
+  end
+
+  def padding(num)
+    " " * (DISPLAY_LENGTH - num)
+  end
+
+  def dashes
+    "-" * DISPLAY_LENGTH
+  end
+
+  def history_header
+    human_name = human.name
+    computer_name = computer.name
+
+    header_info = <<~HEREDOCS
+    | #{human_name}#{padding(human_name.size)}| #{computer_name}#{padding(computer_name.size)}|
+    | #{dashes}| #{dashes}|
+    HEREDOCS
+
+    header_info
+  end
+
+  def display_history_data(human, computer)
+    0.upto(human.size - 1) do |idx|
+      human_move = human[idx]
+      computer_move = computer[idx]
+
+      puts <<~HEREDOCS
+      | #{human_move}#{padding(human_move.size)}| #{computer_move}#{padding(computer_move.size)}|
+      HEREDOCS
+    end
+  end
+
+  def display_history_table
+    human_history = history_of_moves[human.name]
+    computer_history = history_of_moves[computer.name]
+
+    puts history_header
+    display_history_data(human_history, computer_history)
   end
 end
 
@@ -192,6 +248,7 @@ class Score
 end
 
 class RPSGame
+  include Memorable
   include GamePlay
 
   rock = Rock.new
@@ -218,62 +275,20 @@ class RPSGame
   end
 
   def show_rules?
-    puts "Would you like to see the rules?"
+    puts "Would you like to see the rules? (y/yes)"
     answer = gets.chomp.strip.downcase
     ['y', 'yes'].include?(answer) || answer == "\r"
   end
 
   def show_rules
     clear_screen
-    rules = <<-RULES
-    It's just like the classic Rock, Paper, Scissors game but with a twist!
-    
-    Here's how to win:
-    > Rock crushes lizard and breaks scissors
-    > Paper covers rock and disproves Spock
-    > Scissors cuts paper and decapitates lizard
-    > Lizard eats paper and poisons Spock
-    > Spock smashes scissors and vaporizes rock
-    RULES
-    puts rules
+    puts messages('rules')
     return_to_continue
   end
 
   def players_move
     human.choose
     computer.choose
-  end
-
-  def update_move_history
-    history_of_moves[human.name] << human.move.value
-    history_of_moves[computer.name] << computer.move.value
-  end
-
-  def display_history_header
-    human_name = human.name
-    computer_name = computer.name
-
-    puts "| #{human_name}" + (" " * (15 - (human_name).size)) +
-         "| #{computer_name}" + (" " * (15 - (computer_name).size)) + "|"
-    puts "| " + ("-" * 15) + "| " + ("-" * 15) + "|"
-  end
-
-  def display_history_data
-    human_history = history_of_moves[human.name]
-    computer_history = history_of_moves[computer.name]
-
-    0.upto(human_history.size - 1) do |idx|
-      human_move = human_history[idx]
-      computer_move = computer_history[idx]
-
-      puts "| #{human_move}" + (" " * (15 - human_move.size)) +
-           "| #{computer_move}" + (" " * (15 - computer_move.size)) + "|"
-    end
-  end
-
-  def display_history_table
-    display_history_header
-    display_history_data
   end
 
   def display_goodbye_message
