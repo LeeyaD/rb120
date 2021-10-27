@@ -3,8 +3,6 @@ require 'yaml'
 MESSAGES = YAML.load_file('oo_rps_messages.yml')
 
 module GamePlay
-  private
-
   def messages(message)
     MESSAGES[message]
   end
@@ -31,8 +29,6 @@ module GamePlay
 end
 
 module Memorable
-  private
-
   DISPLAY_LENGTH = 15
 
   def update_move_history
