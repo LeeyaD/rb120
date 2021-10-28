@@ -28,13 +28,8 @@ module GamePlay
   end
 end
 
-module Memorable
+module DisplayableHistory
   DISPLAY_LENGTH = 15
-
-  def update_move_history
-    history_of_moves[human.name] << human.move.value
-    history_of_moves[computer.name] << computer.move.value
-  end
 
   def padding(num)
     " " * (DISPLAY_LENGTH - num)
@@ -45,9 +40,6 @@ module Memorable
   end
 
   def history_header
-    human_name = human.name
-    computer_name = computer.name
-
     header_info = <<~HEREDOCS
     | #{human_name}#{padding(human_name.size)}| #{computer_name}#{padding(computer_name.size)}|
     | #{dashes}| #{dashes}|
@@ -68,8 +60,8 @@ module Memorable
   end
 
   def display_history_table
-    human_history = history_of_moves[human.name]
-    computer_history = history_of_moves[computer.name]
+    human_history = move_history[human_name]
+    computer_history = move_history[computer_name]
 
     puts history_header
     display_history_data(human_history, computer_history)
@@ -89,10 +81,39 @@ module Memorable
     return true if answer == 'y'
     return false if answer == 'n'
   end
+end
 
-  def reset_move_history
-    self.history_of_moves = { human.name => [], computer.name => [] }
+class MoveHistory
+  include DisplayableHistory
+  include GamePlay
+
+  attr_accessor :move_history
+
+  def initialize(human_name, computer_name)
+    @move_history = { human_name => [], computer_name => [] }
+    assign_player_names
   end
+
+  def assign_player_names
+    @human_name, @computer_name = acquire_player_names
+  end
+
+  def acquire_player_names
+    move_history.keys
+  end
+
+  def update(human_move, computer_move)
+    move_history[human_name] << human_move
+    move_history[computer_name] << computer_move
+  end
+
+  def reset
+    self.move_history = { human_name => [], computer_name => [] }
+  end
+
+  protected
+
+  attr_reader :human_name, :computer_name
 end
 
 class Player
@@ -238,7 +259,7 @@ class Score
 end
 
 class RPSGame
-  include Memorable
+  include DisplayableHistory
   include GamePlay
 
   rock = Rock.new
@@ -257,7 +278,8 @@ class RPSGame
     @human = Human.new
     @computer = Computer.new
     @score = Score.new(human.name, computer.name)
-    @history_of_moves = { human.name => [], computer.name => [] }
+    # @history_of_moves = { human.name => [], computer.name => [] }
+    @history_of_moves = MoveHistory.new(human.name, computer.name)
   end
 
   def display_welcome_message
@@ -329,7 +351,7 @@ class RPSGame
     find_grand_winner
 
     display_grand_winner if grand_winner
-    display_history_table if see_history?
+    display_move_history if see_history?
 
     score.set_board if grand_winner
     reset_move_history if grand_winner
@@ -339,6 +361,20 @@ class RPSGame
     return_to_continue
     score.update(winner)
     score.display
+  end
+
+  def update_move_history
+    human_move = human.move.value
+    computer_move = computer.move.value
+    history_of_moves.update(human_move, computer_move)
+  end
+
+  def display_move_history
+    history_of_moves.display_history_table
+  end
+
+  def reset_move_history
+    history_of_moves.reset
   end
 
   def move_sequence
