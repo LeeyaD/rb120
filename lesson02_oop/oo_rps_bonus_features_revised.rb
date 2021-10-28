@@ -74,7 +74,7 @@ module DisplayableHistory
     loop do
       puts "Would you like to see a history of moves made? (y/n)"
       answer = gets.chomp.strip.downcase
-      break if ['y', 'n'].include? answer
+      break if RPSGame::VALID_YES_NO.include? answer
       puts "Sorry, answer must be a y or n."
     end
 
@@ -273,12 +273,13 @@ class RPSGame
     lizard: lizard, spock: spock
   }
 
+  VALID_YES_NO = %w(y n)
+
   def initialize
     clear_screen
     @human = Human.new
     @computer = Computer.new
     @score = Score.new(human.name, computer.name)
-    # @history_of_moves = { human.name => [], computer.name => [] }
     @history_of_moves = MoveHistory.new(human.name, computer.name)
   end
 
@@ -396,7 +397,8 @@ class RPSGame
     loop do
       puts "Would you like to play again? (y/n)"
       answer = gets.chomp.strip.downcase
-      break if ['y', 'n'].include? answer.downcase
+      # break if ['y', 'n'].include? answer.downcase
+      break if VALID_YES_NO.include? answer.downcase
       puts "Sorry, must be y or n."
     end
 
