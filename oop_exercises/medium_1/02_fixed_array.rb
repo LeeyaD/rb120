@@ -2,11 +2,14 @@
 fixed_array = FixedArray.new(5)
 puts fixed_array[3] == nil
 puts fixed_array.to_a == [nil] * 5
+# FixedArray.new(2) => [nil, nil]
+# class should create an array input length long with 'nil' as it's elements
 
 fixed_array[3] = 'a'
 puts fixed_array[3] == 'a'
 puts fixed_array.to_a == [nil, nil, nil, 'a', nil]
-
+#[]= elemental assignment will come with this, should be destructive...
+#to_a should output the entire array, brackets & all
 fixed_array[1] = 'b'
 puts fixed_array[1] == 'b'
 puts fixed_array.to_a == [nil, 'b', nil, 'a', nil]
@@ -19,7 +22,7 @@ fixed_array[4] = 'd'
 puts fixed_array[4] == 'd'
 puts fixed_array.to_a == [nil, 'c', nil, 'a', 'd']
 puts fixed_array.to_s == '[nil, "c", nil, "a", "d"]'
-
+#to_s should output the entire array in string form, not just the array's elements
 puts fixed_array[-1] == 'd'
 puts fixed_array[-4] == 'c'
 
