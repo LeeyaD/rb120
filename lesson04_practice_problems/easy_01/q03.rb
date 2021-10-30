@@ -17,5 +17,5 @@ end
 I am a Car and going super fast!
 
 #Thru string interpolation & self.class
-# here self refers to the object instance, when we call #claaa on self we get the name of the class our instance was created from, in this case Car.
+# here self refers to the object instance, when we call #class on self we get the name of the class our instance was created from, in this case Car.
 # then we interpolate our return value, Car, into the output string 
