@@ -19,3 +19,11 @@ class AngryCat
     puts "Hisssss!!!"
   end
 end
+
+grouchy = AngryCat.new(3, "Grouchy")
+grouchy.name
+grouchy.age
+
+moody = AngryCat.new(2, "Moody")
+moody.name
+moody.age

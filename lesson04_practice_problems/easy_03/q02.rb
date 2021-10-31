@@ -17,3 +17,4 @@ class Goodbye < Greeting
   end
 end
 # If we call Hello.hi we get an error message. How would you fix this?
+# A: Prefix #hi with 'self' to turn the instance method into a class method
