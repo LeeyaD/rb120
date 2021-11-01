@@ -1,7 +1,7 @@
 require 'pry'
 require 'pry-byebug'
 module GameFlow
-  def clear
+  def clear_screen
     system 'clear'
   end
 end
@@ -104,8 +104,7 @@ class TTTGame
     puts "Thank you for playing. Goodbye!"
   end
 
-  def display_board(clear_screen: true)
-    clear if clear_screen
+  def display_board
     puts "You're #{HUMAN_MARKER}. Computer is #{COMPUTER_MARKER}."
     puts ""
     puts "     |     |"
@@ -120,6 +119,11 @@ class TTTGame
     puts "  #{board.get_square_at(7)}  |  #{board.get_square_at(8)}  |  #{board.get_square_at(9)}"
     puts "     |     |"
     puts ""
+  end
+
+  def clear_screen_and_display_board
+    clear_screen
+    display_board
   end
 
   def human_moves
@@ -139,7 +143,7 @@ class TTTGame
   end
 
   def display_result
-    display_board
+    clear_screen_and_display_board
     case board.detect_winner
     when human.marker
       puts "You won!"
@@ -163,11 +167,11 @@ class TTTGame
   end
 
   def play
-    clear
+    clear_screen
     display_welcome_message
 
     loop do
-      display_board(clear_screen: false)
+      display_board
 
       loop do
         human_moves
@@ -175,12 +179,12 @@ class TTTGame
         
         computer_moves
         break if board.someone_won? || board.full?
-        display_board
+        clear_screen_and_display_board
       end
       display_result
       break unless play_again?
       board.reset
-      clear
+      clear_screen
       puts "Let's play again!"
       puts ""
     end
@@ -188,7 +192,6 @@ class TTTGame
   end
 end
 
-# we'll start a game like this
 game = TTTGame.new
 
 game.play
