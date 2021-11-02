@@ -34,11 +34,19 @@ class Board
     !!winning_marker
   end
   
+  def count_human_marker(squares)
+    squares.collect(&:marker).count(TTTGame::HUMAN_MARKER)
+  end
+
+  def count_computer_marker(squares)
+    squares.collect(&:marker).count(TTTGame::COMPUTER_MARKER)
+  end
+
   def winning_marker
     WINNING_LINES.each do |line|
-      if line.all? { |marker| @squares[marker].marker == TTTGame::HUMAN_MARKER }
-      return TTTGame::HUMAN_MARKER
-      elsif line.all? { |marker| @squares[marker].marker == TTTGame::COMPUTER_MARKER }
+      if count_human_marker(@squares.values_at(*line)) == 3
+        return TTTGame::HUMAN_MARKER
+      elsif count_computer_marker(@squares.values_at(*line)) == 3
         return TTTGame::COMPUTER_MARKER
       end
     end
@@ -96,7 +104,7 @@ class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
 
-  attr_reader :board, :human, :computer
+  attr_reader :board, :human, :computer, :winner
 
   def initialize
     @board = Board.new
@@ -167,6 +175,7 @@ class TTTGame
   end
 
   def reset
+    @winner = nil
     board.reset
     clear_screen
   end
