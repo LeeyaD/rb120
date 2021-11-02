@@ -4,6 +4,22 @@ module GameFlow
   def clear_screen
     system 'clear'
   end
+
+  def return_to_continue
+    puts ""
+    puts "Press 'enter' to continue"
+    gets
+    clear_screen
+  end
+
+  def pause(num)
+    sleep num
+  end
+
+  def pause_and_clear(num)
+    pause(num)
+    clear_screen
+  end
 end
 
 module Displayable
