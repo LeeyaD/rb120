@@ -6,6 +6,18 @@ module GameFlow
   end
 end
 
+module Displayable
+  def joinor(array, delimiter=', ', last='or')
+    return array.first if array.size == 1
+    output = ""
+    last_item = "#{last} #{array.pop}"
+    array.each { |num| output << "#{num}#{delimiter}"}
+  
+    output << last_item
+    (array.size == 1) ? output.gsub(",", "") : output
+  end
+end
+
 class Board
   WINNING_LINES = [
     [1, 2, 3], [4, 5, 6], [7, 8, 9],
@@ -107,6 +119,7 @@ class Player
 end
 
 class TTTGame
+  include Displayable
   include GameFlow
 
   HUMAN_MARKER = "X"
@@ -119,7 +132,6 @@ class TTTGame
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
-    # @human_move = true
     @human_move = FIRST_TO_MOVE
   end
 
@@ -174,7 +186,7 @@ class TTTGame
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
+    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
     square = nil
     loop do
       square = gets.chomp.strip.to_i
