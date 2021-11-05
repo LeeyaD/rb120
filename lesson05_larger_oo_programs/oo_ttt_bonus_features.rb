@@ -127,10 +127,67 @@ class Square
 end
 
 class Player
-  attr_reader :marker
+  include GameFlow
+
+  attr_reader :marker, :name
 
   def initialize(marker)
     @marker = marker
+    @name = set_name
+  end
+end
+
+class Human < Player
+  def set_name
+    clear_screen
+    answer = nil
+    loop do
+      puts "What's your name? "
+      answer = gets.chomp.strip.capitalize
+      break if answer
+      puts "Please enter a name."
+    end
+    return_to_continue
+    answer
+  end
+end
+
+class Computer < Player
+  def set_name
+    ["Howl", "Naussica", "Chihiro", "Lin"].sample
+  end
+end
+
+class Score
+  WINS = 2
+
+  attr_accessor :score
+  attr_reader :human_name, :computer_name
+
+  def initialize(human_name, computer_name)
+    @human_name = human_name
+    @computer_name = computer_name
+    reset
+  end
+
+  def reset
+    @score = { human_name => 0, computer_name => 0}
+  end
+
+  def update(winner)
+    self.score[winner] += 1
+  end
+
+  def grand_winner
+    self.score.key(WINS)
+  end
+
+  def display
+    puts ""
+    puts "The scores are..."
+    puts "#{human_name}: #{score[human_name]}"
+    puts "#{computer_name}: #{score[computer_name]}"
+    puts ""
   end
 end
 
@@ -142,18 +199,20 @@ class TTTGame
   COMPUTER_MARKER = "O"
   FIRST_TO_MOVE = true
 
-  attr_reader :board, :human, :computer, :winner, :human_move
+  attr_reader :board, :human, :computer, :human_move, :scoreboard, :winner, :grand_winner
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
+    @human = Human.new(HUMAN_MARKER)
+    @computer = Computer.new(COMPUTER_MARKER)
+    @scoreboard = Score.new(human.name, computer.name)
     @human_move = FIRST_TO_MOVE
   end
 
   def play
     clear_screen
     display_welcome_message
+    return_to_continue
     main_game
     display_goodbye_message
   end
@@ -164,11 +223,41 @@ class TTTGame
     loop do
       display_board
       player_move
+      find_round_winner
       display_result
+      update_and_display_score
+      find_and_display_grand_winner
       break unless play_again?
       reset
       display_play_again_message
     end
+  end
+
+  def find_and_display_grand_winner
+    find_grand_winner
+    display_grand_winner if grand_winner
+  end
+
+  def find_grand_winner
+    @grand_winner = scoreboard.grand_winner
+  end
+
+  def display_grand_winner
+    puts "#{grand_winner} won the game with a score of #{Score::WINS}!"
+  end
+
+  def update_and_display_score
+    update_score
+    pause(1)
+    display_score
+  end
+
+  def display_score
+    scoreboard.display
+  end
+
+  def update_score
+    scoreboard.update(winner) if winner
   end
 
   def player_move
@@ -180,7 +269,13 @@ class TTTGame
   end
 
   def display_welcome_message
-    puts "Welcome to Tic-Tac-Toe!"
+    puts "Welcome to Tic-Tac-Toe #{human.name}!"
+    puts ""
+    pause(1)
+    puts "Today you'll be playing against #{computer.name}."
+    puts ""
+    pause(1)
+    puts "First player to get to #{Score::WINS} wins the game!"
     puts ""
   end
 
@@ -235,12 +330,23 @@ class TTTGame
     clear_screen_and_display_board
     case board.winning_marker
     when human.marker
-      puts "You won!"
+      puts "#{human.name} won!"
     when computer.marker
-      puts "Computer won!"
+      puts "#{computer.name} won!"
     else
       puts "It's a tie!"
     end
+    return_to_continue
+  end
+
+  def find_round_winner
+    @winner = if board.winning_marker == human.marker
+                human.name
+              elsif board.winning_marker == computer.marker
+                computer.name
+              else
+                nil
+              end
   end
 
   def play_again?
@@ -256,9 +362,9 @@ class TTTGame
   end
 
   def reset
-    @winner = nil
     @human_move = FIRST_TO_MOVE
     board.reset
+    scoreboard.reset if grand_winner
     clear_screen
   end
 
