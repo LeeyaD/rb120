@@ -34,6 +34,18 @@ module Displayable
   end
 end
 
+module AIStrategy
+  attr_accessor :threat
+
+  def choose_random_square
+    board[board.unmarked_keys.sample] = computer.marker
+  end
+
+  def defend_square
+    board[threat] = computer.marker if threat
+  end
+end
+
 class Board
   WINNING_LINES = [
     [1, 2, 3], [4, 5, 6], [7, 8, 9],
@@ -72,6 +84,18 @@ class Board
     nil
   end
 
+  def find_at_risk_square(marker)
+    Board::WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      if two_identical_markers?(squares, marker)
+        line.each do |key|
+          return key if @squares[key].marker == Square::INITIAL_MARKER
+        end
+      end
+    end
+    nil
+  end
+
   def reset
     (1..9).each { |key| @squares[key] = Square.new }
   end
@@ -101,6 +125,11 @@ class Board
     squares.collect(&:marker).all? do |sq|
       sq == squares.first.marker
     end
+  end
+
+  def two_identical_markers?(squares, marker)
+    return false if squares.all?(&:marked?)
+    squares.collect(&:marker).count(marker) == 2
   end
 end
 
@@ -194,6 +223,7 @@ end
 class TTTGame
   include Displayable
   include GameFlow
+  include AIStrategy
 
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
@@ -309,7 +339,14 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    @threat = board.find_at_risk_square(human.marker)
+    
+    if threat
+      defend_square
+    else
+      choose_random_square
+    end
+    
   end
 
   def current_player_moves

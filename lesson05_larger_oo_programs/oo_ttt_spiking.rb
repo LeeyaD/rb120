@@ -1,11 +1,9 @@
-# Computer turn refinements
-# Computer AI Defense
-# Computer AI Offense
 # Allow the player to pick any marker
+# Computer turn refinements
 
-# ON DECK: Keep Score
+# ON DECK: Computer AI Offense
 # 1. Textual Description
-# The computer currently picks a square at random. Let's make the computer defensive minded, so that if there's an immediate threat, then it will defend the 3rd square. We'll consider an "immediate threat" to be 2 squares marked by the opponent in a row. If there's no immediate threat, then it will just pick a random square.
+# TThe defensive minded AI is pretty cool, but it's still not performing as well as it could because if there are no impending threats, it will pick a square at random. We'd like to make a slight improvement on that. We're not going to add in any complicated algorithm (there's an extra bonus below on that), but all we want to do is piggy back on our find_at_risk_square from bonus #3 above and turn it into an attacking mechanism as well. The logic is simple: if the computer already has 2 in a row, then fill in the 3rd square, as opposed to moving at random.
 
 # 2. Extract major nouns/verbs
 # Nouns: square, computer
@@ -16,28 +14,37 @@
 # - defense
 
 # 4. Spike it! & Do CRC cards one you understand it better
-module AIOffense; end
-module AIDefense #contain various AI Defense strategies
-# if there's an immediate threat, i.e. 2 marked squares by an opponent, defend the 3rd sq
+module AIStrategy
+  attr_accessor :threat
 
-# defend_square if threat?
+  def choose_random_square
+    board[board.unmarked_keys.sample] = computer.marker
+  end
+
+  def find_at_risk_square
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      if two_opposing_markers?(squares)
+        line.each do |key|
+          return key if @squares[key].marker == Square::INITIAL_MARKER
+        end
+      end
+    end
+    nil
+  end
+
+  def defend_square
+    @threat = find_at_risk_square
+    board[threat] = computer.marker if threat
+  end
+
+  def two_opposing_markers?(squares) # ["X", "O", " "]
+    return false if squares.all?(&:marked?)
+    squares.collect(&:marker).count(human.marker) == 2
+  end
 end
 
 class Board
-  WINNING_LINES = [
-    [1, 2, 3], [4, 5, 6], [7, 8, 9],
-    [1, 4, 7], [2, 5, 8], [3, 6, 9],
-    [1, 5, 9], [3, 5, 7]
-  ]
-
-  def []=(square, marker)
-    @squares[square].marker = marker
-  end
-
-  def unmarked_keys
-    @squares.keys.select { |key| @squares[key].unmarked? }
-  end
-
   def winning_marker
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
@@ -63,11 +70,11 @@ class Board
 end
 
 class TTTGame
-  include AIDefense
+  include AIStrategy
 
   def computer_moves # currently set to random
-    board[board.unmarked_keys.sample] = computer.marker
+    defend_square if immediate_threat?
+    choose_random_square
     
-    defend_square if threat?
   end
 end
