@@ -1,0 +1,16 @@
+show_rules?: "Would you like to see the rules? (y/yes to see them or 'enter' to skip)"
+rules: |
+  Tic-Tac-Toe is a two-player game, where players take turns marking the spaces in a 3×3 grid (i.e. the board) with either an X or an O.
+
+  => To win the game, a player must place three of their marks in a horizontal, vertical, or diagonal row.
+  For example -> You're X. Computer is O.
+
+      HORIZONTAL WIN    VERITCAL WIN    DIAGONAL WIN
+         |   |             | X |         X |   |
+      ---+---+---       ---+---+---     ---+---+---
+       X | X | X           | X |           | X |
+      ---+---+---       ---+---+---     ---+---+---
+         |   |             | X |           |   | X
+computer_choosing: Computer is deciding who goes first...
+invalid_1_2_choice: "That's not a valid choice. 1 or 2 please."
+change_marker: "You're 'X' by default, would you like to be 'O' instead? (y/yes to switch to 'O')"

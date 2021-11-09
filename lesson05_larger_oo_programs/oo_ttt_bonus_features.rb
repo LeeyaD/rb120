@@ -1,6 +1,12 @@
-require 'pry'
-require 'pry-byebug'
+require 'yaml'
+
+MESSAGES = YAML.load_file('oo_ttt_messages.yml')
+
 module GameFlow
+  VALID_YES_NO = %w(y n)
+  VALID_YES = %w(y yes)
+  VALID_NUM_CHOICE = %w(1 2)
+
   def clear_screen
     system 'clear'
   end
@@ -20,6 +26,10 @@ module GameFlow
     pause(num)
     clear_screen
   end
+
+  def messages(message)
+    puts MESSAGES[message]
+  end
 end
 
 module Displayable
@@ -27,22 +37,26 @@ module Displayable
     return array.first if array.size == 1
     output = ""
     last_item = "#{last} #{array.pop}"
-    array.each { |num| output << "#{num}#{delimiter}"}
-  
+    array.each { |num| output << "#{num}#{delimiter}" }
+
     output << last_item
-    (array.size == 1) ? output.gsub(",", "") : output
+    array.size == 1 ? output.gsub(",", "") : output
   end
 end
 
 module AIStrategy
-  attr_accessor :threat
+  attr_accessor :threat, :attack
 
   def choose_random_square
     board[board.unmarked_keys.sample] = computer.marker
   end
 
-  def defend_square
-    board[threat] = computer.marker if threat
+  def select_square(third_sq)
+    board[third_sq] = computer.marker
+  end
+
+  def choose_middle_square
+    board[5] = computer.marker
   end
 end
 
@@ -84,7 +98,7 @@ class Board
     nil
   end
 
-  def find_at_risk_square(marker)
+  def find_3rd_square(marker)
     Board::WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
       if two_identical_markers?(squares, marker)
@@ -94,6 +108,10 @@ class Board
       end
     end
     nil
+  end
+
+  def middle_sq_free?
+    @squares[5].marker == Square::INITIAL_MARKER
   end
 
   def reset
@@ -158,7 +176,8 @@ end
 class Player
   include GameFlow
 
-  attr_reader :marker, :name
+  attr_accessor :marker
+  attr_reader :name
 
   def initialize(marker)
     @marker = marker
@@ -176,7 +195,20 @@ class Human < Player
       break if answer
       puts "Please enter a name."
     end
-    return_to_continue
+    answer
+  end
+
+  def who_goes_first?
+    answer = nil
+    loop do
+      puts ""
+      puts "Who do you want to go first? (1 for yourself or 2 for the computer)"
+      answer = gets.chomp.strip
+      break if VALID_NUM_CHOICE.include?(answer)
+      messages('invalid_1_2_choice')
+      puts ""
+    end
+
     answer
   end
 end
@@ -184,6 +216,12 @@ end
 class Computer < Player
   def set_name
     ["Howl", "Naussica", "Chihiro", "Lin"].sample
+  end
+
+  def who_goes_first?
+    messages('computer_choosing')
+    pause(1)
+    %w(1 2).sample
   end
 end
 
@@ -200,15 +238,15 @@ class Score
   end
 
   def reset
-    @score = { human_name => 0, computer_name => 0}
+    @score = { human_name => 0, computer_name => 0 }
   end
 
   def update(winner)
-    self.score[winner] += 1
+    score[winner] += 1
   end
 
   def grand_winner
-    self.score.key(WINS)
+    score.key(WINS)
   end
 
   def display
@@ -227,22 +265,24 @@ class TTTGame
 
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
-  FIRST_TO_MOVE = true
 
-  attr_reader :board, :human, :computer, :human_move, :scoreboard, :winner, :grand_winner
+  attr_accessor :human_move
+  attr_reader :board, :human, :computer, :scoreboard,
+              :winner, :grand_winner, :chooser
 
   def initialize
     @board = Board.new
     @human = Human.new(HUMAN_MARKER)
     @computer = Computer.new(COMPUTER_MARKER)
     @scoreboard = Score.new(human.name, computer.name)
-    @human_move = FIRST_TO_MOVE
   end
 
   def play
     clear_screen
     display_welcome_message
-    return_to_continue
+    show_rules if show_rules?
+    choose_marker
+    first_player_selection_sequence
     main_game
     display_goodbye_message
   end
@@ -253,7 +293,6 @@ class TTTGame
     loop do
       display_board
       player_move
-      find_round_winner
       display_result
       update_and_display_score
       find_and_display_grand_winner
@@ -261,6 +300,74 @@ class TTTGame
       reset
       display_play_again_message
     end
+  end
+
+  def choose_marker
+    change_marker if change_marker?
+  end
+
+  def change_marker
+    human.marker = COMPUTER_MARKER
+    computer.marker = HUMAN_MARKER
+  end
+
+  def change_marker?
+    answer = nil
+    loop do
+      messages('change_marker')
+      answer = gets.chomp.strip
+      break
+    end
+
+    VALID_YES.include?(answer)
+  end
+
+  def show_rules?
+    messages('show_rules?')
+    answer = gets.chomp.strip.downcase
+    VALID_YES.include?(answer)
+  end
+
+  def show_rules
+    clear_screen
+    messages('rules')
+    return_to_continue
+  end
+
+  def first_player_selection_sequence
+    clear_screen
+    @chooser = who_chooses_first
+    @human_move = !(chooser.who_goes_first? == "2")
+    puts ""
+    if human_move
+      puts "You're going first!"
+    else
+      puts "#{computer.name} goes first!"
+    end
+    return_to_continue
+  end
+
+  def who_chooses_first
+    case who_chooses_first_player
+    when "1"
+      human
+    when "2"
+      computer
+    end
+  end
+
+  def who_chooses_first_player
+    answer = nil
+    loop do
+      puts "Who gets to choose who goes first? "
+      puts "(1 for you or 2 for #{computer.name})"
+      answer = gets.chomp.strip
+      break if VALID_NUM_CHOICE.include?(answer)
+      messages('invalid_1_2_choice')
+      puts ""
+    end
+
+    answer
   end
 
   def find_and_display_grand_winner
@@ -301,12 +408,11 @@ class TTTGame
   def display_welcome_message
     puts "Welcome to Tic-Tac-Toe #{human.name}!"
     puts ""
-    pause(1)
     puts "Today you'll be playing against #{computer.name}."
     puts ""
-    pause(1)
-    puts "First player to get to #{Score::WINS} wins the game!"
+    puts "First player to win #{Score::WINS} rounds wins the game!"
     puts ""
+    return_to_continue
   end
 
   def display_goodbye_message
@@ -315,7 +421,7 @@ class TTTGame
   end
 
   def display_board
-    puts "You're #{HUMAN_MARKER}. Computer is #{COMPUTER_MARKER}."
+    puts "You're #{human.marker}. Computer is #{computer.marker}."
     puts ""
     board.draw
     puts ""
@@ -338,24 +444,39 @@ class TTTGame
     board[square] = human.marker
   end
 
-  def computer_moves
-    @threat = board.find_at_risk_square(human.marker)
-    
-    if threat
-      defend_square
+  def detect_threat
+    @threat = board.find_3rd_square(human.marker)
+  end
+
+  def detect_attack
+    @attack = board.find_3rd_square(computer.marker)
+  end
+
+  def computer_selects_sq
+    if attack
+      select_square(attack)
+    elsif threat
+      select_square(threat)
+    elsif board.middle_sq_free?
+      choose_middle_square
     else
       choose_random_square
     end
-    
+  end
+
+  def computer_moves
+    detect_threat
+    detect_attack
+    computer_selects_sq
   end
 
   def current_player_moves
     if human_turn?
       human_moves
-      @human_move = !FIRST_TO_MOVE
+      @human_move = false
     else
       computer_moves
-      @human_move = FIRST_TO_MOVE
+      @human_move = true
     end
   end
 
@@ -364,34 +485,27 @@ class TTTGame
   end
 
   def display_result
+    find_round_winner
     clear_screen_and_display_board
-    case board.winning_marker
-    when human.marker
-      puts "#{human.name} won!"
-    when computer.marker
-      puts "#{computer.name} won!"
-    else
-      puts "It's a tie!"
-    end
+    puts winner ? "#{winner} won!" : "It's a tie!"
     return_to_continue
   end
 
   def find_round_winner
-    @winner = if board.winning_marker == human.marker
-                human.name
-              elsif board.winning_marker == computer.marker
-                computer.name
-              else
-                nil
+    @winner = case board.winning_marker
+              when human.marker then human.name
+              when computer.marker then computer.name
               end
   end
 
   def play_again?
     answer = nil
+    pause(1)
     loop do
+      puts ""
       puts "Would you like to play again? (y/n)"
       answer = gets.chomp.strip.downcase
-      break if %w(y n).include?(answer)
+      break if VALID_YES_NO.include?(answer)
       puts "Sorry, must be y or n"
     end
 
@@ -399,9 +513,9 @@ class TTTGame
   end
 
   def reset
-    @human_move = FIRST_TO_MOVE
     board.reset
     scoreboard.reset if grand_winner
+    first_player_selection_sequence
     clear_screen
   end
 
