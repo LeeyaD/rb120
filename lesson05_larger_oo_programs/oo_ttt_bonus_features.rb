@@ -42,6 +42,18 @@ module Displayable
     output << last_item
     array.size == 1 ? output.gsub(",", "") : output
   end
+
+  def display_board
+    puts "You're #{human.marker}. Computer is #{computer.marker}."
+    puts ""
+    board.draw
+    puts ""
+  end
+
+  def clear_screen_and_display_board
+    clear_screen
+    display_board
+  end
 end
 
 module AIStrategy
@@ -118,23 +130,21 @@ class Board
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   def draw
-    puts "     |     |"
-    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
-    puts "     |     |"
+    puts <<-HEREDOC
+         |     |
+      #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}
+         |     |
+    -----+-----+-----
+         |     |
+      #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}
+         |     |
+    -----+-----+-----
+         |     |
+      #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}
+         |     |
+    HEREDOC
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -192,7 +202,7 @@ class Human < Player
     loop do
       puts "What's your name? "
       answer = gets.chomp.strip.capitalize
-      break if answer
+      break if !answer.empty?
       puts "Please enter a name."
     end
     answer
@@ -214,8 +224,9 @@ class Human < Player
 end
 
 class Computer < Player
+  COMP_NAME = ["Howl", "Naussica", "Chihiro", "Lin"]
   def set_name
-    ["Howl", "Naussica", "Chihiro", "Lin"].sample
+    COMP_NAME.sample
   end
 
   def who_goes_first?
@@ -420,17 +431,17 @@ class TTTGame
     puts "Thank you for playing. Goodbye!"
   end
 
-  def display_board
-    puts "You're #{human.marker}. Computer is #{computer.marker}."
-    puts ""
-    board.draw
-    puts ""
-  end
+  # def display_board
+  #   puts "You're #{human.marker}. Computer is #{computer.marker}."
+  #   puts ""
+  #   board.draw
+  #   puts ""
+  # end
 
-  def clear_screen_and_display_board
-    clear_screen
-    display_board
-  end
+  # def clear_screen_and_display_board
+  #   clear_screen
+  #   display_board
+  # end
 
   def human_moves
     puts "Choose a square (#{joinor(board.unmarked_keys)}): "
