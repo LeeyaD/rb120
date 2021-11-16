@@ -1,0 +1,15 @@
+rules?: Would you like to see the rules? (y/yes to see them, or enter to skip & start playing!)
+rules: |
+  OBJECTIVE
+  - Beat the dealer by getting as close to 21 as possible, without going over.
+  
+  CARD VALUE/SCORING
+  - Ace is worth 1 or 11. Face cards are 10 and any other card is its card value (e.g. a 2 of Clubs is worth 2).
+
+  GAMEPLAY
+  - To start, each player except the dealer receives two cards face up, and the dealer receives one card face up and one card face down.
+  - You go first, decide whether to "stay" (not ask for another card) or "hit" (ask for another card in an attempt to get closer to a count of 21, or even hit 21 exactly). If you bust (i.e. go over 21), the dealer wins. When you decide to "stay", it's the dealer's turn.
+  - On the dealer's turn, they must "stay" if the total is 17 or more. If the total is 16 or less, they must take a card. If the dealer busts, you win.
+  - When both you and the dealer choose to stay, both of your hands are compared and the one with the highest value wins.
+
+  Let's start playing!

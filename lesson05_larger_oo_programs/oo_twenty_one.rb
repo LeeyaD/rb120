@@ -1,6 +1,15 @@
 require 'pry'
 require 'pry-byebug'
+require 'yaml'
+
 module GameFlow
+  MESSAGES = YAML.load_file('oo_twenty_one_messages.yml')
+  VALID_YES = %w(y yes)
+
+  def messages(message)
+    puts MESSAGES[message]
+  end
+
   def clear_screen
     system 'clear'
   end
@@ -211,7 +220,21 @@ class Game
   def welcome_sequence
     clear_screen
     display_welcome_message
+    pause(1)
+    show_rules if show_rules?
+  end
+
+  def show_rules
+    clear_screen
+    messages('rules')
     return_to_continue
+  end
+
+  def show_rules?
+    empty_line
+    messages('rules?')
+    answer = gets.chomp.strip.downcase
+    VALID_YES.include?(answer)
   end
 
   def deal_and_show_initial_cards
@@ -231,6 +254,7 @@ class Game
   end
 
   def deal_initial_cards
+    clear_screen
     puts "Dealing first two cards..."
     puts ""
     pause(1.5)
@@ -256,6 +280,7 @@ class Game
   end
 
   def hit(player)
+    empty_line
     puts "#{player.name} chooses to hit..."
     return_to_continue
     deal_card(player)
