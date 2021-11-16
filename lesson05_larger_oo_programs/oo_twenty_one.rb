@@ -98,15 +98,16 @@ class Player < Participant
   def show_hand
     puts "You have:"
     hand.each do |card|
+      pause(0.75)
       puts card
     end
     empty_line
   end
 
-  def hit_or_stay?
+  def hit?
     answer = nil
     loop do
-      puts ""
+      empty_line
       puts "Would you like to hit or stay?"
       answer = gets.chomp.strip.downcase
       break if %w(hit stay).include?(answer)
@@ -127,6 +128,7 @@ class Dealer < Participant
   def show_hand
     puts "#{self.name} has:"
     hand.each_with_index do |card, idx|
+      pause(0.75)
       if idx == 0
         puts "[Hidden Card]"
       else
@@ -134,6 +136,14 @@ class Dealer < Participant
       end
     end
     puts ""
+  end
+
+  def hit?
+    total <= 17
+  end
+
+  def stay?
+    total >= 17 
   end
 end
 
@@ -204,11 +214,12 @@ class Game
     return_to_continue
   end
 
-  def show_and_deal_initial_cards
+  def deal_and_show_initial_cards
     deal_initial_cards
     show_cards
+    pause(0.5)
     show_player_total
-    return_to_continue
+    empty_line
   end
 
   def display_welcome_message
@@ -236,6 +247,7 @@ class Game
 
   def show_cards
     dealer.show_hand
+    pause(1)
     player.show_hand
   end
 
@@ -243,53 +255,58 @@ class Game
     puts "You have a total of #{player.total}."
   end
 
+  def hit(player)
+    puts "#{player.name} chooses to hit..."
+    return_to_continue
+    deal_card(player)
+    show_cards
+  end
+
   def player_turn
     loop do
-      hit = player.hit_or_stay?
-      if hit
-        empty_line
-        puts "You chose to hit..."
-        pause_and_clear_screen(1)
-        deal_card(player)
-        show_cards
-        show_player_total
+      if player.hit?
+        hit(player)
+        pause(0.75)
+        show_player_total if !player.busted?
       end
-      break if !hit || player.busted?
+      break if !player.hit? || player.busted?
     end
 
     if player.busted?
       self.winner = dealer
       puts "You busted with #{player.total}!"
+      empty_line
+      puts "#{dealer.name} won!"
     else
+      empty_line
       puts "You chose to stay."
     end
-    empty_line
   end
 
   def dealer_turn
     loop do
-      if dealer.total < 17
-        puts "#{dealer.name} chose to hit..."
-        pause_and_clear_screen(1)
-        deal_card(dealer)
-        show_cards
+      if dealer.hit?
+        hit(dealer)
       end
 
-      break if dealer.total >= 17 || dealer.busted?
+      break if dealer.stay?|| dealer.busted?
     end
 
     if dealer.busted?
       self.winner = player
       puts "#{dealer.name} busted with #{dealer.total}!"
+      empty_line
+      puts "#{player.name} won!"
     else
       puts "#{dealer.name} chose to stay."
     end
-    puts ""
+    empty_line
   end
 
   def show_result
     @winner = player.compare_hands(dealer)
     if winner
+      empty_line
       puts "#{winner.name} won with #{winner.total}."
     else
       puts "No one won, it was a tie!"
@@ -320,8 +337,9 @@ class Game
   def start
     welcome_sequence
     loop do
-      show_and_deal_initial_cards
+      deal_and_show_initial_cards
       player_turn
+      return_to_continue
       dealer_turn if !winner
       show_result if !winner
       break if !play_again?
