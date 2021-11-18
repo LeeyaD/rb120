@@ -49,10 +49,7 @@ class Participant
     total > Game::GAME_LIMIT
   end
 
-  def total
-    values = hand.map(&:value)
-
-    sum = 0
+  def counting_cards(values, sum)
     values.each do |value|
       sum += if value == "A"
                11
@@ -62,12 +59,23 @@ class Participant
                value.to_i
              end
     end
+    sum
+  end
 
+  def counting_a(values, sum)
     values.select { |value| value == "A" }.count.times do
       sum -= 10 if sum > 21
     end
-
     sum
+  end
+
+  def total
+    values = hand.map(&:value)
+
+    sum = 0
+    sum = counting_cards(values, sum)
+    new_sum = counting_a(values, sum)
+    new_sum
   end
 
   def compare_hands(other_player)
@@ -82,6 +90,26 @@ class Participant
 
   def reset
     self.hand = []
+  end
+
+  def use_player_name
+    self.class == Player ? "You" : name
+  end
+
+  def end_of_turn_sequence
+    name = use_player_name
+    if busted?
+      puts "#{name} busted with #{total}!"
+      empty_line
+    else
+      empty_line
+      puts "#{name} chose to stay."
+    end
+    empty_line
+  end
+
+  def human?
+    self.class == Player
   end
 end
 
@@ -131,11 +159,11 @@ class Dealer < Participant
 
   def initialize
     super
-    @name = self.class
+    @name = self.class.to_s
   end
 
   def show_hand
-    puts "#{self.name} has:"
+    puts "#{name} has:"
     hand.each_with_index do |card, idx|
       pause(0.75)
       if idx == 0
@@ -149,10 +177,6 @@ class Dealer < Participant
 
   def hit?
     total <= 17
-  end
-
-  def stay?
-    total >= 17 
   end
 end
 
@@ -237,14 +261,6 @@ class Game
     VALID_YES.include?(answer)
   end
 
-  def deal_and_show_initial_cards
-    deal_initial_cards
-    show_cards
-    pause(0.5)
-    show_player_total
-    empty_line
-  end
-
   def display_welcome_message
     puts "Welcome to Twenty-One #{player.name}!"
   end
@@ -256,7 +272,7 @@ class Game
   def deal_initial_cards
     clear_screen
     puts "Dealing first two cards..."
-    puts ""
+    empty_line
     pause(1.5)
     2.times do
       deal_card(player)
@@ -273,6 +289,9 @@ class Game
     dealer.show_hand
     pause(1)
     player.show_hand
+    pause(0.5)
+    # show_player_total
+    # empty_line
   end
 
   def show_player_total
@@ -281,51 +300,68 @@ class Game
 
   def hit(player)
     empty_line
-    puts "#{player.name} chooses to hit..."
+    name = player.use_player_name
+    puts name + " chose to hit..."
     return_to_continue
     deal_card(player)
+  end
+
+  def player_turns
     show_cards
+    show_player_total
+    participant_turn(player)
+    return_to_continue
+    participant_turn(dealer)
+  end
+
+  def participant_turn(player)
+    if !player.human?
+      puts "Dealer's turn..."
+      empty_line
+    end
+
+    # show_cards
+    # show_player_total if player.human?
+
+    loop do
+      hit = player.hit?
+      if hit
+        hit(player)
+        show_cards
+        pause(0.75)
+        show_player_total if player.human?
+      end
+      break if !hit || player.busted?
+    end
+
+    player.end_of_turn_sequence
   end
 
   def player_turn
     loop do
-      if player.hit?
+      hit = player.hit?
+      if hit
         hit(player)
         pause(0.75)
         show_player_total if !player.busted?
       end
-      break if !player.hit? || player.busted?
+      break if !hit || player.busted?
     end
 
-    if player.busted?
-      self.winner = dealer
-      puts "You busted with #{player.total}!"
-      empty_line
-      puts "#{dealer.name} won!"
-    else
-      empty_line
-      puts "You chose to stay."
-    end
+    player.end_of_turn_sequence
   end
 
   def dealer_turn
     loop do
-      if dealer.hit?
+      hit = dealer.hit?
+      if hit
         hit(dealer)
       end
 
-      break if dealer.stay?|| dealer.busted?
+      break if !hit || dealer.busted?
     end
 
-    if dealer.busted?
-      self.winner = player
-      puts "#{dealer.name} busted with #{dealer.total}!"
-      empty_line
-      puts "#{player.name} won!"
-    else
-      puts "#{dealer.name} chose to stay."
-    end
-    empty_line
+    dealer.end_of_turn_sequence
   end
 
   def show_result
@@ -362,10 +398,9 @@ class Game
   def start
     welcome_sequence
     loop do
-      deal_and_show_initial_cards
-      player_turn
-      return_to_continue
-      dealer_turn if !winner
+      # deal_and_show_initial_cards
+      deal_initial_cards
+      player_turns
       show_result if !winner
       break if !play_again?
       reset
