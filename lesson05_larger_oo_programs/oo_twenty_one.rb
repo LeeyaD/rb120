@@ -290,8 +290,6 @@ class Game
     pause(1)
     player.show_hand
     pause(0.5)
-    # show_player_total
-    # empty_line
   end
 
   def show_player_total
@@ -300,29 +298,25 @@ class Game
 
   def hit(player)
     empty_line
-    name = player.use_player_name
-    puts name + " chose to hit..."
+    if !player.human?
+      name = player.use_player_name
+      puts name + " chooses to hit..."
+    end
     return_to_continue
     deal_card(player)
   end
 
+  def dealer_turn_intro
+    puts "Dealer's turn..."
+    empty_line
+  end
   def player_turns
-    show_cards
-    show_player_total
-    participant_turn(player)
+    player_turn
     return_to_continue
-    participant_turn(dealer)
+    dealer_turn
   end
 
   def participant_turn(player)
-    if !player.human?
-      puts "Dealer's turn..."
-      empty_line
-    end
-
-    # show_cards
-    # show_player_total if player.human?
-
     loop do
       hit = player.hit?
       if hit
@@ -334,34 +328,20 @@ class Game
       break if !hit || player.busted?
     end
 
+    empty_line
     player.end_of_turn_sequence
   end
 
   def player_turn
-    loop do
-      hit = player.hit?
-      if hit
-        hit(player)
-        pause(0.75)
-        show_player_total if !player.busted?
-      end
-      break if !hit || player.busted?
-    end
-
-    player.end_of_turn_sequence
+    show_cards
+    show_player_total
+    participant_turn(player)
   end
 
   def dealer_turn
-    loop do
-      hit = dealer.hit?
-      if hit
-        hit(dealer)
-      end
-
-      break if !hit || dealer.busted?
-    end
-
-    dealer.end_of_turn_sequence
+    dealer_turn_intro
+    show_cards
+    participant_turn(dealer)
   end
 
   def show_result
@@ -398,7 +378,6 @@ class Game
   def start
     welcome_sequence
     loop do
-      # deal_and_show_initial_cards
       deal_initial_cards
       player_turns
       show_result if !winner
