@@ -79,13 +79,7 @@ class Participant
   end
 
   def compare_hands(other_player)
-    if total > other_player.total
-      self
-    elsif total < other_player.total
-      other_player
-    elsif total == other_player.total
-      # return nil
-    end
+
   end
 
   def reset
@@ -94,18 +88,6 @@ class Participant
 
   def use_player_name
     self.class == Player ? "You" : name
-  end
-
-  def end_of_turn_sequence
-    name = use_player_name
-    if busted?
-      puts "#{name} busted with #{total}!"
-      empty_line
-    else
-      empty_line
-      puts "#{name} chose to stay."
-    end
-    empty_line
   end
 
   def human?
@@ -152,6 +134,13 @@ class Player < Participant
 
     answer == 'hit'
   end
+
+  def hit(player)
+    empty_line
+    puts "You chose to hit..."
+    deal_card(player)
+    return_to_continue
+  end
 end
 
 class Dealer < Participant
@@ -177,6 +166,18 @@ class Dealer < Participant
 
   def hit?
     total <= 17
+  end
+
+  def hit(player)
+    empty_line
+    puts name + " chose to hit..."
+    deal_card(player)
+    return_to_continue
+  end
+
+  def turn_intro
+    puts "Dealer's turn..."
+    empty_line
   end
 end
 
@@ -296,62 +297,51 @@ class Game
     puts "You have a total of #{player.total}."
   end
 
-  def hit(player)
-    empty_line
-    if !player.human?
-      name = player.use_player_name
-      puts name + " chooses to hit..."
-    end
-    return_to_continue
-    deal_card(player)
-  end
+  def player_turn
+    show_cards
+    show_player_total
 
-  def dealer_turn_intro
-    puts "Dealer's turn..."
-    empty_line
-  end
-  def player_turns
-    player_turn
-    return_to_continue
-    dealer_turn
-  end
-
-  def participant_turn(player)
     loop do
       hit = player.hit?
       if hit
-        hit(player)
+        player.hit
         show_cards
         pause(0.75)
-        show_player_total if player.human?
+        show_player_total
       end
+
       break if !hit || player.busted?
     end
 
     empty_line
-    player.end_of_turn_sequence
-  end
-
-  def player_turn
-    show_cards
-    show_player_total
-    participant_turn(player)
+    if player.busted?
+      # ....
+    end
   end
 
   def dealer_turn
-    dealer_turn_intro
+    dealer.turn_intro
     show_cards
-    participant_turn(dealer)
+    
+    loop do
+      hit = dealer.hit?
+      if hit
+        dealer.hit
+        show_cards
+        pause(0.75)
+        show_player_total if dealer.human?
+      end
+      break if !hit || dealer.busted?
+    end
+
+    empty_line
+    if dealer.busted?
+      # ....
+    end
   end
 
   def show_result
-    @winner = player.compare_hands(dealer)
-    if winner
-      empty_line
-      puts "#{winner.name} won with #{winner.total}."
-    else
-      puts "No one won, it was a tie!"
-    end
+
   end
 
   def play_again?
@@ -379,8 +369,10 @@ class Game
     welcome_sequence
     loop do
       deal_initial_cards
-      player_turns
-      show_result if !winner
+      player_turn # need to build
+      return_to_continue
+      dealer_turn # need to build
+      # show_result <- need to build out
       break if !play_again?
       reset
     end
