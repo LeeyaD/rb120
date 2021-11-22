@@ -1,5 +1,3 @@
-require 'pry'
-require 'pry-byebug'
 require 'yaml'
 
 module GameFlow
@@ -78,20 +76,28 @@ class Participant
     new_sum
   end
 
-  def compare_hands(other_player)
-
-  end
-
   def reset
     self.hand = []
   end
 
-  def use_player_name
+  def human?
+    self.class == Player
+  end
+
+  def personalize_name
     self.class == Player ? "You" : name
   end
 
-  def human?
-    self.class == Player
+  def end_of_turn_sequence
+    name = personalize_name
+    empty_line
+    if busted?
+      puts name + " busted with #{total}!"
+    else
+      puts name + " chose to stay with #{total}."
+    end
+    empty_line
+    pause(1)
   end
 end
 
@@ -134,13 +140,6 @@ class Player < Participant
 
     answer == 'hit'
   end
-
-  def hit(player)
-    empty_line
-    puts "You chose to hit..."
-    deal_card(player)
-    return_to_continue
-  end
 end
 
 class Dealer < Participant
@@ -166,13 +165,6 @@ class Dealer < Participant
 
   def hit?
     total <= 17
-  end
-
-  def hit(player)
-    empty_line
-    puts name + " chose to hit..."
-    deal_card(player)
-    return_to_continue
   end
 
   def turn_intro
@@ -229,6 +221,21 @@ end
 
 class Game
   include GameFlow
+
+  def start
+    welcome_sequence
+    loop do
+      deal_initial_cards
+      player_turn
+      dealer_turn if !player.busted?
+      show_result
+      break if !play_again?
+      reset
+    end
+    display_goodbye_message
+  end
+
+  private
 
   GAME_LIMIT = 21
 
@@ -297,51 +304,70 @@ class Game
     puts "You have a total of #{player.total}."
   end
 
+  def hit(player)
+    pause_and_clear_screen(0.5)
+    name = player.personalize_name
+    puts name + " chose to hit..."
+    deal_card(player)
+    empty_line
+  end
+
+  def end_of_hit_gameflow
+    if player.human?
+      pause(0.75)
+      show_player_total
+    else
+      return_to_continue
+    end
+  end
+
+  def hit_sequence(player)
+    loop do
+      choice = player.hit?
+      if choice
+        hit(player)
+        show_cards
+      end
+
+      break if !choice || player.busted?
+
+      end_of_hit_gameflow
+    end
+  end
+
   def player_turn
     show_cards
     show_player_total
-
-    loop do
-      hit = player.hit?
-      if hit
-        player.hit
-        show_cards
-        pause(0.75)
-        show_player_total
-      end
-
-      break if !hit || player.busted?
-    end
-
-    empty_line
-    if player.busted?
-      # ....
-    end
+    hit_sequence(player)
+    player.end_of_turn_sequence
   end
 
   def dealer_turn
     dealer.turn_intro
-    show_cards
-    
-    loop do
-      hit = dealer.hit?
-      if hit
-        dealer.hit
-        show_cards
-        pause(0.75)
-        show_player_total if dealer.human?
-      end
-      break if !hit || dealer.busted?
-    end
+    pause(0.75)
+    hit_sequence(dealer)
+    dealer.end_of_turn_sequence
+  end
 
-    empty_line
-    if dealer.busted?
-      # ....
+  def compare_cards
+    if player.total > dealer.total
+      [player.personalize_name, player.total]
+    else
+      [dealer.name, dealer.total]
     end
   end
 
   def show_result
-
+    if player.busted?
+      puts "Dealer won!"
+    elsif dealer.busted?
+      puts "You won!"
+    elsif player.total == dealer.total
+      puts "You both tied with #{player.total}"
+    else
+      winner, winner_total = compare_cards
+      puts "#{winner} won with #{winner_total}!"
+    end
   end
 
   def play_again?
@@ -363,20 +389,6 @@ class Game
     player.reset
     dealer.reset
     clear_screen
-  end
-
-  def start
-    welcome_sequence
-    loop do
-      deal_initial_cards
-      player_turn # need to build
-      return_to_continue
-      dealer_turn # need to build
-      # show_result <- need to build out
-      break if !play_again?
-      reset
-    end
-    display_goodbye_message
   end
 end
 
