@@ -1,5 +1,6 @@
 # We have written some code for a simple employee management system. Each employee must have a unique serial number. However, when we are testing our program, an exception is raised. Fix the code so that the program works as expected without error.
-
+# Recall that from outside the class, protected methods work just like private methods. From inside the class, however, protected methods are accessible and may be invoked with an explicit caller.
+# made 'attr_reader serial_number' protected rather than private
 class EmployeeManagementSystem
   attr_reader :employer
 
