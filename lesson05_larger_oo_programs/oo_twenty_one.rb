@@ -33,6 +33,39 @@ module GameFlow
   end
 end
 
+module ActionableTurn
+  def hit(player)
+    pause_and_clear_screen(0.5)
+    name = player.personalize_name
+    puts name + " chose to hit..."
+    deal_card(player)
+    empty_line
+  end
+
+  def end_of_hit_gameflow
+    if player.human?
+      pause(0.75)
+      player.show_total
+    else
+      return_to_continue
+    end
+  end
+
+  def hit_sequence(player)
+    loop do
+      choice = player.hit?
+      if choice
+        hit(player)
+        show_cards
+      end
+
+      break if !choice || player.busted?
+
+      end_of_hit_gameflow
+    end
+  end
+end
+
 class Participant
   include GameFlow
 
@@ -99,6 +132,14 @@ class Participant
     empty_line
     pause(1)
   end
+
+  def compare_hands(other_player)
+    if total > other_player.total
+      [personalize_name, total]
+    else
+      [other_player.name, other_player.total]
+    end
+  end
 end
 
 class Player < Participant
@@ -127,6 +168,10 @@ class Player < Participant
       puts card
     end
     empty_line
+  end
+
+  def show_total
+    puts "You have a total of #{total}."
   end
 
   def hit?
@@ -220,14 +265,11 @@ class Card
 end
 
 class Game
-  include GameFlow
-
   def start
     welcome_sequence
     loop do
       deal_initial_cards
-      player_turn
-      dealer_turn if !player.busted?
+      player_turns
       show_result
       break if !play_again?
       reset
@@ -236,6 +278,9 @@ class Game
   end
 
   private
+
+  include GameFlow
+  include ActionableTurn
 
   GAME_LIMIT = 21
 
@@ -300,44 +345,14 @@ class Game
     pause(0.5)
   end
 
-  def show_player_total
-    puts "You have a total of #{player.total}."
-  end
-
-  def hit(player)
-    pause_and_clear_screen(0.5)
-    name = player.personalize_name
-    puts name + " chose to hit..."
-    deal_card(player)
-    empty_line
-  end
-
-  def end_of_hit_gameflow
-    if player.human?
-      pause(0.75)
-      show_player_total
-    else
-      return_to_continue
-    end
-  end
-
-  def hit_sequence(player)
-    loop do
-      choice = player.hit?
-      if choice
-        hit(player)
-        show_cards
-      end
-
-      break if !choice || player.busted?
-
-      end_of_hit_gameflow
-    end
+  def player_turns
+    player_turn
+    dealer_turn if !player.busted?
   end
 
   def player_turn
     show_cards
-    show_player_total
+    player.show_total
     hit_sequence(player)
     player.end_of_turn_sequence
   end
@@ -349,14 +364,6 @@ class Game
     dealer.end_of_turn_sequence
   end
 
-  def compare_cards
-    if player.total > dealer.total
-      [player.personalize_name, player.total]
-    else
-      [dealer.name, dealer.total]
-    end
-  end
-
   def show_result
     if player.busted?
       puts "Dealer won!"
@@ -365,7 +372,7 @@ class Game
     elsif player.total == dealer.total
       puts "You both tied with #{player.total}"
     else
-      winner, winner_total = compare_cards
+      winner, winner_total = player.compare_hands(dealer)
       puts "#{winner} won with #{winner_total}!"
     end
   end
