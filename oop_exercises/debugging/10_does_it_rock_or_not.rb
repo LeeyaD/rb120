@@ -14,7 +14,7 @@ class SearchEngine
 
   private
 
-  def self.valid?(key)
+  def self.valid?(key) # key == 'LS1A'
     key == 'LS1A'
   end
 end
@@ -65,7 +65,3 @@ puts DoesItRock.find_out('Bug hunting') # Bug hunting rocks!
 # Is this what you expect to happen given the code?
 
 # And why do we always get the following output instead?
-# because "#{term} rocks!" is our else statement and so rescue never gets executed.
-# Sushi rocks!
-# Rain rocks!
-# Bug hunting rocks!
