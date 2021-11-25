@@ -43,27 +43,38 @@ drawn != drawn2 # Almost always.
 
 # Note that the last line should almost always be true; if you shuffle the deck 1000 times a second, you will be very, very, very old before you see two consecutive shuffles produce the same results. If you get a false result, you almost certainly have something wrong.
 
-# NEED ORIGINAL EXERCISE SOLUTION BELOW
-class Card
-  include Comparable
-  attr_reader :rank, :suit
+# FURTHER EXPLORATION
+# class Card
+#   include Comparable
 
-  VALUES = { 'Jack' => 11, 'Queen' => 12, 'King' => 13, 'Ace' => 14 }
+#   RANKING = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace']
 
-  def initialize(rank, suit)
-    @rank = rank
-    @suit = suit
-  end
+#   attr_reader :rank, :suit
 
-  def to_s
-    "#{rank} of #{suit}"
-  end
+#   def initialize(rank, suit)
+#     @rank = rank
+#     @suit = suit
+#   end
 
-  def value
-    VALUES.fetch(rank, rank)
-  end
+#   def rank_index(r)
+#     RANKING.index(r)
+#   end
 
-  def <=>(other_card)
-    value <=> other_card.value
-  end
-end
+#   def <=>(other_card)
+#     if rank_index(rank) < rank_index(other_card.rank)
+#       -1
+#     elsif rank_index(rank) == rank_index(other_card.rank)
+#       0
+#     else
+#       1
+#     end
+#   end
+
+#   # def ==(other_card)
+#   #   [rank, suit] == [other_card.rank, other_card.suit]
+#   # end
+
+#   def to_s
+#     "#{rank}" + " of " + "#{suit}"
+#   end
+# end
