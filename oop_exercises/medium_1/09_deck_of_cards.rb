@@ -2,8 +2,31 @@
 class Deck
   RANKS = ((2..10).to_a + %w(Jack Queen King Ace)).freeze
   SUITS = %w(Hearts Clubs Diamonds Spades).freeze
+
+  attr_reader :deck
+
+  def initialize
+    @deck = initialize_deck
+  end
+
+  def initialize_deck
+    combos = SUITS.product(RANKS).shuffle
+    combos.each_with_object([]) do |(suit, rank), arr|
+      arr << Card.new(rank, suit)
+    end
+  end
+
+  def draw
+    reset if deck.empty?
+    deck.pop
+  end
+
+  def reset
+    @deck = initialize_deck
+  end
 end
 
+# Card.new(5, 'Hearts')
 # from previous solution
 class Card
   include Comparable
@@ -34,12 +57,12 @@ end
 deck = Deck.new
 drawn = []
 52.times { drawn << deck.draw }
-drawn.count { |card| card.rank == 5 } == 4
-drawn.count { |card| card.suit == 'Hearts' } == 13
+puts drawn.count { |card| card.rank == 5 } == 4
+puts drawn.count { |card| card.suit == 'Hearts' } == 13
 
 drawn2 = []
 52.times { drawn2 << deck.draw }
-drawn != drawn2 # Almost always.
+puts drawn != drawn2 # Almost always.
 
 # Note that the last line should almost always be true; if you shuffle the deck 1000 times a second, you will be very, very, very old before you see two consecutive shuffles produce the same results. If you get a false result, you almost certainly have something wrong.
 
