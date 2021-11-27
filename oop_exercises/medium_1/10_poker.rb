@@ -1,10 +1,14 @@
 # In the previous two exercises, you developed a Card class and a Deck class. You are now going to use those classes to create and evaluate poker hands. Create a class, PokerHand, that takes 5 cards from a Deck of Cards and evaluates those cards as a Poker hand. If you've never played poker before, you may find this overview of poker hands useful.
 
 # You should build your class using the following code skeleton:
-# Include Card and Deck classes from the last two exercises.
+# Include Card and Deck classes from last two exercises.
+require 'pry'
+require 'pry-byebug'
 class Deck
   RANKS = ((2..10).to_a + %w(Jack Queen King Ace)).freeze
   SUITS = %w(Hearts Clubs Diamonds Spades).freeze
+
+  attr_reader :deck
 
   def initialize
     reset
@@ -52,10 +56,14 @@ end
 
 
 class PokerHand
+  attr_reader :hand
+
   def initialize(deck)
+    @hand = deal(deck)
   end
 
   def print
+    puts hand
   end
 
   def evaluate
@@ -75,31 +83,68 @@ class PokerHand
 
   private
 
+  def deal(deck)
+    hand = []
+    5.times do
+      hand << deck.draw
+    end
+    hand
+  end
+
+  def get_values
+    hand.map(&:value)
+  end
+
+  def matching_ranks(values, value)
+    values.any? do |rank|
+      values.count(rank) == value
+    end
+  end
+
+  def royal?
+    card_values = get_values.sort
+    card_values == [10, 11, 12, 13, 14]
+  end
+
   def royal_flush?
+    flush? && straight? && royal?
   end
 
   def straight_flush?
+    flush? && straight?
   end
 
   def four_of_a_kind?
+    matching_ranks(get_values, 4)
   end
 
   def full_house?
+    three_of_a_kind? && pair?
   end
 
   def flush?
+    suits = hand.map(&:suit)
+    suits.uniq.size == 1
   end
 
   def straight?
+    card_values = get_values.sort
+    4.times.all? do |idx|
+      (card_values[idx] + 1) == card_values[idx+1]
+    end
   end
 
   def three_of_a_kind?
+    matching_ranks(get_values, 3)
   end
 
   def two_pair?
+    ranks = get_values
+    ranks.uniq.size == 3
   end
 
   def pair?
+    matching_ranks(get_values, 2)
   end
 end
 
@@ -238,5 +283,3 @@ puts hand.evaluate == 'High card'
 # The exact cards and the type of hand will vary with each run.
 
 # Most variants of Poker allow both Ace-high (A, K, Q, J, 10) and Ace-low (A, 2, 3, 4, 5) straights. For simplicity, your code only needs to recognize Ace-high straights.
-
-# If you are unfamiliar with Poker, please see this description of the various hand types. Since we won't actually be playing a game of Poker, it isn't necessary to know how to play.
