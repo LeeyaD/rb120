@@ -1,15 +1,43 @@
 # Specific Topics of Interest
-# - Classes and objects
+# - CLASSES AND OBJECTS
+# -->> They're like molds or templates for our objects, They define our object's state & behaviors. Objects are created from classes and contain a combination of data and methods.
+# Here, the #initialize method creates a new Dog object by assigning the instance variable @name to the dog's name specified by the argument.
+class Dog
+  def initialize(name)
+    @name = name
+  end
+
+  def name
+    @name
+  end
+
+  def name=(new_name)
+    @name = new_name
+  end
+end
+
+dog1 = Dog.new('Bob')
+p dog1.name
+dog1.name = 'Duke'
+p dog1.name
+# - USING ATTR_* TO CREATE SETTER & GETTER METHODS
+# -->> 
+# - HOW TO CALL SETTERS & GETTERS
+def name=(n)
+  @name = n
+end
+# -->> This is a setter method, we can use Ruby's syntactic sugar when calling it like so:
+dog1.name = 'Duke'
+
+def name
+  @name
+end
+# -->> When calling a setter method
+# - INSTANCE METHODS vs. CLASS METHODS
 # -->>
-# - Use attr_* to create setter and getter methods
+# - METHOD ACCESS CONTROL
 # -->> 
-# - How to call setters and getters
-# -->> 
-# - Instance methods vs. class methods
-# -->>
-# - Method Access Control
-# -->> 
-# - Referencing & setting instance variables vs. using getters & setters
+# - REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS
 # -->> 
 # - CLASS INHERITANCE
 # -->>
@@ -43,7 +71,7 @@
 [1, 2, 3] == true
 # will all return false
 
-# - Working with collaborator objects
+# - WORKING WITH COLLABORATOR OBJECTS
 # -->> 
 
 # Precision of Language
