@@ -51,19 +51,95 @@ end
 # -->> This is a getter method, we call by name it on instances of classes too
 
 # - INSTANCE METHODS vs. CLASS METHODS
-# -->>
+# Both methods are defined in our class definition.
+# -->> An instance method is an instance-level method. It has access to instance variables and serves as a way for us to expose information about the state of our object. It's called on instantiated objects of the class.
+# -->> A class method is a class-level method. It has access to class variables and serves as a way for us to expose information about the state of our class. It's called directly on the class itself whether an object has been instantiated or not.
+# The difference between the two in syntax is that we define a class method with either the class name or the keyword 'self' affixed to the front of the method name, like so:
+class Human
+  def self.what_am_i?
+    "I am a class method."
+  end
+
+  def speak
+    "I am an instance method."
+  end
+end
+p Human.what_am_i?
+leeya = Human.new
+p leeya.speak
+
+def Human.what_class_am_i?; end # or
+def self.what_class_am_i?; end
 
 # - METHOD ACCESS CONTROL
+# -->> Access control is simply restricting access to things. In Ruby, we apply this concept to our methods thru the use of access modifiers. We can decide if we want certain methods to be public, protected, or private by defining them under access modifiers, keywords 'protected' or 'private' (methods not defined under either keywords are automatically public)
+
+# - PUBLIC, PROTECTED, and PRIVATE methods 
 # -->> 
 
 # - REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS
-# -->> 
+# -->> It's better to use getter & setter methods when referencing and setting instance variables rather than doing so directly. 
+class BankAccount
+  attr_reader :name, :acct_number
+
+  def initialize(name)
+    @name = name
+    @acct_number = set_acct_number
+  end
+
+  def set_acct_number
+    # generates a unique 8-digit account #
+    12345678
+  end
+
+  def acct_number
+    "XXXX" + @acct_number.to_s[-4..-1]
+  end
+end
+# For example, in this code #acct_number is our custom getter method and we see that whenever we expose the account number (i.e. call this method) we only want the last 4 digits visible. We can still achieve this when referencing the @var directly, but we'll need to sprinkle `"XXXX" + @acct_number.to_s[-4..-1]` wherever we're referencing @acct_number directly. Now, let's say we change our minds and now only want the last 2 digits exposed. If we're referencing the @var directly, we'll have to comb through our code to change every reference whereas by using our getter method, we only need to make the necessary changes to one method.
+# The same goes for setting an @var, even if we choose not to format the data we want to save as state in our object. If we decide later on that we want to manipulate the incoming data before storing it, rather than comb through our code to change each instance of setting the var we can go to one place.
+
 
 # - CLASS INHERITANCE
-# -->>
+# -->> When one class known as the subclass, inherits behaviors from another class, known as the superclass. A subclass can only have one superclass but a superclass can have many subclasses. This kind of domain model based on hierarchy allows us to extract common behavior to the superclass to be reused by subclasses while leaving subclasses to define and implement fine-grained, detailed behavior.
+class Animal
+  def eat; end
+  def move; end
+end
+
+class Dog < Animal
+  def fetch; end
+  def jump; end
+end
+
+class Turle < Animal
+end
 
 # - ENCAPSULATION
-# -->> 
+# -->> A form of data protection that let's us make certain data/functionality of an object unavailable to access and/or change from the outside without explicit intention. 
+# This is done by NOT creating methods that interact with the data we want to hide. For example;
+class BankAccount
+  attr_reader :name, :acct_number
+
+  def initialize(name)
+    @name = name
+    @acct_number = set_acct_number
+  end
+
+  def set_acct_number
+    # generates a unique 8-digit account #
+    12345678
+  end
+
+  def acct_number
+    "XXXX" + @acct_number.to_s[-4..-1]
+  end
+end
+leeya = BankAccount.new('Leeya')
+p leeya.name
+p leeya.acct_number
+# Here by not creating a setter method for our @acct_number we're not allowing this piece of data to be changed or manipulated from the outside.
+# Encapsulation can also be implimented through Method Access Control
 
 # - POLYMORPHISM
 # -->> 
