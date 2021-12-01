@@ -90,27 +90,8 @@ def self.what_class_am_i?; end
 # -->> Access control is simply restricting access to things. In Ruby, we apply this concept to our methods thru the use of access modifiers. We can decide if we want certain methods to be public, protected, or private by defining them under access modifiers, keywords 'protected' or 'private' (methods not defined under either keywords are automatically public)
 
 # - PUBLIC, PROTECTED, and PRIVATE methods 
-# -->> PRIVATE
-class Dog
-  def initialize(name, age)
-    @name = name
-    @age = age
-  end
-
-  def age
-    calculate_age
-  end
-
-  private
-
-  def calculate_age
-    @age * 7
-  end
-end
-
-dog1 = Dog.new('Duke', 4)
-p dog1.age
-# -->> PROTECTED
+# -->> PRIVATE, remember it can only be called on ourselves (the calling object)
+# -->> PROTECTED, called on ourselves AND other's like us (objects of the same class)
 class Dog
   def initialize(name, age)
     @name = name
@@ -225,10 +206,7 @@ class Gazelle < Mammal
   end
 end
 
-class Sloth < Mammal; end         # Sloths cannot jump.
-class Elephant < Mammal; end      # Elephants cannot jump.
-
-mammals = [HumanBeing.new, Gazelle.new, Sloth.new, Elephant.new]
+mammals = [HumanBeing.new, Gazelle.new]
 mammals.each { |mammal| p mammal.jump}
 
 class Animal
@@ -303,6 +281,25 @@ p PaperBack.ancestors
 p Digital.ancestors
 # Digital > Downloadable > Lendable > Books > Object > Kernel > BasicObject
 # Here Ruby first checks the class, then any mixed in modules from the last one mixed in to the first (bottom - up)
+
+module Foo1
+end
+
+module Foo2
+end
+
+module Bar
+include Foo1
+  
+  class Fooey
+    include Foo2
+  end
+end
+
+p Bar::Fooey.ancestors
+# (X) Fooey > Foo2 > Bar > Foo1 > Object > Kernel > BasicObject
+# (O) Bar::Fooey > Foo2 > Object > Kernel > BasicObject
+# class Fooey doesn't inherit from a module, it's just stored in it
 
 # - SELF
 # --> Calling methods with self
@@ -388,7 +385,7 @@ end
 # While working through the assessment questions it is useful to run your code often to check it, so make sure to have either ruby document/terminal or an online repl prepared beforehand.
 
 
-# CAROLINA'S NOTES
+# CAROLINA'S NOTES ---------------------------------------
 ## Classes and Objects
 
 **Objects** are anything that can be said to have a value. Objects are the basic building blocks of an OOP program and are created *from* classes to communicate through  methods; they can send and recieve messages as well as process data. In order to create an object, an object needs to be *instantiated* from a class; **instantiation** is when an object is created from a class using the class method `::new`. All objects instantiated from the same class share the same *behaviors* but they contain different *states*. Objects *encapsulate* state.
@@ -738,7 +735,7 @@ _____
 
 ### Modules
 
-Modules are used to group *reusable* code in one place; they are used for *interface inheritance*, *namespacing*, and to store *module methods*.
+# Modules are used to group *reusable* code in one place; they are used for *interface inheritance*, *namespacing*, and to store *module methods*.
 
 Modules are Ruby's solution for multiple inheritance; in Ruby, a class can only sub-class from one super class. But a class can have as many mixin modules as the programmer chooses. When modules are mixed in to a class via the `include` method invocation followed by the module name, that is called *interface inheritance*. Interface inheritance is best to choose if there's an "has-a" relationship. Interface inheritance creates a flexible and DRY (Don't Repeat Yourself) code design.
 
@@ -991,3 +988,55 @@ _____
 ### "OO DESIGN" - What is meant by it?
 
 The phrase "OO Design" means when a programmer explores the problem or concept before designing a program structure while focusing on performance and flexibility options. An OO design must avoid repitition and keep the code DRY; it's helpful to use crc cards to lay out a design plan and use spike (initial exploratory code) organized code. There is no right or wring way to design an OO programs but over time programmers learn there are trade offs between choosing a design over another. 
+
+# Classes and Objects
+  # Objects
+  # Classes
+  # Object Instantiation
+  # Instance Variables
+  # Instance Methods
+  # Class Variables
+  # Class Methods
+  # Instance Methods vs Class Methods
+# Setter and Getter Methods
+  # Getter Methods
+  # Setter Methods
+  # Using attr_*
+# Method Access Control
+  # Public
+  # Private
+  # Protected
+# Inheritance
+  # Class Inheritance
+  # Interface Inheritance
+  # Method Lookup Path
+  # Super
+  # Object Methods
+  # Variable Scope with Inheritance
+# Polymorphism & Encapsulation
+  # Polymorphism
+    # Polymorphism Through Inheritance
+    # Polymorphism Through Duck Typing
+  # Encapsulation
+# Modules
+  # Mixin Modules
+  # Namespacing
+  # Module Methods
+# Self
+  # Inside Instance Methods
+  # Inside Class Methods
+  # Inside Class Definitions
+  # Inside Mixin Modules
+  # Outside Any Class
+# Fake Operators and Equality
+  # Equivalence
+    # ==
+    # equal? and object_id
+    # ===
+    # eql?
+  # Fake Operators
+    # Comparison Methods
+    # Right and Left Shift
+    # Plus
+    # Element Setters and Getters
+# Collaborator Objects
