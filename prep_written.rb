@@ -3,18 +3,19 @@
 # 19q in 150min is 7.8min each
 
 # Specific Topics of Interest
-# - WHAT IS OOP?
+# - WHAT IS OOP? -----------------------------
 # -->> a Programming model that allows us to section off areas of code that perform certain procedures. This allows programs to become an interaction of many small parts that can be changed/manipulated without affecting the entire program.
 
-# - WHAT ARE THE BENEFITS OF OOP?
+# - WHAT ARE THE BENEFITS OF OOP? ------------
 # OOP lets us write programs in which the different parts of the program interact, thus reducing dependencies and facilitating maintenance.
 # Defining basic classes and leveraging concepts like inheritance to introduce more detailed behaviors provides a greater level of reusability and flexibility.
 # Using OOP to model classes appropriate to the problem, and using real-world nouns to represent objects, lets programmers think at a higher level of abstraction that helps them break down and solve problems.
 # Using OOP lets programmers write shorter programs; with less code, OO programs run more efficiently.
 
-# - CLASSES AND OBJECTS
-# -->> They're like molds or templates for our objects, They define our object's state & behaviors. Objects are created from classes and contain a combination of data and methods.
-# Here, the #initialize method creates a new Dog object by assigning the instance variable @name to the dog's name specified by the argument.
+# - CLASSES AND OBJECTS -----------------------
+# -->> Classes are molds or templates for our objects, They define our object's attributes & behaviors. Objects are created from classes and contain a combination of data and methods.
+# Here, we create a new Dog object by calling #new on class Dog. We pass #new an argument that will be passed to #initialize where it will be assigned the instance variable @name.
+```ruby
 class Dog
   def initialize(name)
     @name = name
@@ -23,47 +24,50 @@ class Dog
   def name
     @name
   end
+end
 
-  def name=(new_name)
-    @name = new_name
+dog1 = Dog.new('Duke')
+p dog1.name
+```
+
+# # - INSTANCE VARIABLES vs. CLASS VARIABLES -----
+@name
+# -->> @variables store the state of an object, are scoped at the object-level and are only accessible via an instance method. They have to be initialized in order to be referenced, so if they're initialized in a method, that method must be called first. If this doesn't happen, the initialization doesn't occur and when referenced the instance variable will return nil.
+@@number_of_objects
+# -->> @@variables store the state of the class, are scoped at the class-level and can be accessed by both instance & class variables. 
+
+# - HOW TO CALL SETTERS & GETTERS -------------
+```ruby
+class Dog
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
   end
 end
 
-dog1 = Dog.new('Bob')
+dog1 = Dog.new('Lucky')
 p dog1.name
-dog1.name = 'Duke'
-p dog1.name
-
-# # - INSTANCE VARIABLES vs. CLASS VARIABLES
-@name
-# -->> @variables store the state of an object and are scoped at the object-level and so they're only accessible via an instance method. @var have to be initialized in order to be referenced, this means if they're initialized in a method, that method must be called first otherwise the initialization won't happen and when references the instance variable will return nil.
-@@number_of_objects
-# -->> @@variables store the state of the class and are scoped at the class-level and can be accessed by both instance & class variables. 
-
-# - HOW TO CALL SETTERS & GETTERS
-def name=(n)
-  @name = n
-end
-# -->> This is a setter method, we call it on class instances using Ruby's syntactic sugar, like so:
-dog1.name = 'Duke' #this way is more readable but we can also call it without using Ruby's syntactic sugar, like:
-dog1.name=('Duke') #parenthesis are optional
-# ------
-def name
-  @name
-end
-# -->> This is a getter method, we call it by name on instances of classes too
+```
+# -->> We call setter methods by name within the class using the keyword self or outside the class by name on an instance of the class.
+# within the class
+`self.name = 'Duke'`
+# outside the class on our object
+`dog1.name = 'Duke'` #it's more readable this way but we can also call it without using Ruby's syntactic sugar, like so:
+`dog1.name=('Duke')` #parenthesis are optional
+# -->> We call getter methods by name both within the class or outside of the class on an instance of our class.
+# within the class
+`name` # value of instance variable is returned
+# outside the class on our object
+`dog1.name` # value of instance variable is returned
 
 # - USING ATTR_* TO CREATE SETTER & GETTER METHODS
-# -->> Rather than write out our setter & getter methods e can use Ruby's syntactic sugar 'attr_*' to create them for us.
-attr_reader :name # this 1 line of code is actually the method #attr_reader being called and it creates a getter method and instance variable of the same name as the argument being passed to it
-def name
-  @name
-end
-attr_writer :name # this is the method #attr_writer being called and it creates a setter method and instance variable of the same name as the argument being passed to it
-def name=(name)
-  @name = name
-end
-attr_accessor :name # the #attr_accessor method creates a getter method, a setter method and an instance variable of the same name as the argument being passed to it
+# -->> We can use Ruby's built-in attr_* methods to create our getters, setters and instance variables them for us. attr_* methods take symbols as arguments and use them to create getters, setters and instance variables of the same name.
+`attr_reader :name` # there #attr_reader creates a getter method and instance variable using the same name as the argument being passed to it
+
+`attr_writer :name` # there #attr_writer creates a setter method and instance variable using the same name as the argument being passed to it
+
+`attr_accessor :name` # here #attr_accessor creates a getter method, a setter method and an instance variable using the same name as the argument being passed to it
 
 # - INSTANCE METHODS vs. CLASS METHODS
 # Both methods are defined in our class definition.
@@ -386,98 +390,6 @@ end
 
 
 # CAROLINA'S NOTES ---------------------------------------
-## Classes and Objects
-
-**Objects** are anything that can be said to have a value. Objects are the basic building blocks of an OOP program and are created *from* classes to communicate through  methods; they can send and recieve messages as well as process data. In order to create an object, an object needs to be *instantiated* from a class; **instantiation** is when an object is created from a class using the class method `::new`. All objects instantiated from the same class share the same *behaviors* but they contain different *states*. Objects *encapsulate* state.
-
-**Classes** can be thought of as a template, blueprint, or the basic outline of what an object should be made of and what is should be able to do. A class describes the *states* and *behaviors* that the objects of that class all share. The *state* of an object tracks attributes for individual objects which are stored in *instance variables*. The *behaviors* of an object are what those objects are capable of doing and are stored in *intance methods*. 
-
-Classes can be thought of as molds and objects are what are produced from those molds.
-
-```ruby
-class HumanBeing
-	def initialize(name)
-		@name = name
-	end
-
-	def greet
-		puts "Hello, my name is #{@name}"
-	end
-end
-
-carolina = HumanBeing.new("Carolina")
-```
-
-In the example above, an object called `carolina` is instantiated from the class `HumanBeing` by calling the class method `::new`; the string "Carolina" is passed in as an argument to the `::new` class method, which is then passed to the `initialize` instance method on `line 11-13`. Within the initialize method, the `@name` instance variable is assigned to the string "Carolina" and is currently tracking the name of the object instantiated from the `HumanBeing` class. The `greet` instance method is a behavior available for the object `carolina` to use. In fact, the `greet` instance method is available for any object instantiated from the `HumanBeing` class for use. 
-
-The object `carolina` was instantiated from the `HumanBeing` class. The `@name` instance variable is keeping track of the instances state and the `greet` instance method is a behavior available for the object referenced by `carolina` to use. This is an example of how objects are created from classes and how a class tracks an objects state via instance variables and a class describes the behaviors available to its objects via instance methods. 
-
-
-_____
-### What are Accessor methods
-
-**Accessor methods** are methods that are created to retrieve and/or set/modify instance variables that hold an object's state. Accessor methods are either *getter* or *setter* methods. *Getter* methods retrieve or expose the state of an object ; *Setter* methods set a value within an instance variable that has not been initialized yet or it modifies a pre-existing value within an instance variable. Getter and setter methods are conventionally named using the same name as the instance variable that is being exposed or set. 
-
-### Use `attr_*` to create setter and getter methods
-
-**`attr_*`** methods are Ruby's built-in way of creating getter and/or setter methods by taking a symbol as an argument and using it to create the method name for the getter and/or setter method. The `attr_accessor` creates a *getter* and a *setter* method, the `attr_reader` creates a getter method only and the `attr_writer` creates a setter method only. All `attr_*` methods take a symbol as its parameter and accept multiple parameters to create multiple setters and/or getters. 
-
-### How to call setters and getters
-
-Setter and getter methods can be called within the class or outside of the class to set/modify or expose an objects state. 
-
-If there is a getter method within a class definition, whether it's a manual getter method or a getter method created by `attr_accessor` or `attr_reader`, it is preferred to call the method name of the *getter* method instead of calling the instance variable directly within the class. The getter method can be called outside of the class by invoking the getter method name on the instance of the class. 
-
-Setter methods can be invoked outside of a class, on an instance of a class, and will need additional syntax; the additional syntax being whatever object that is being assigned or reassigned to the instance variable within the setter method. To invoke a setter method within the class definition, the setter method *must* be prefixed with `self` so that Ruby can disambiguate between a local variable being initialized and invoking a setter method. 
-
-```ruby
-class HumanBeing
-  attr_accessor :motto
-  attr_writer :age
-
-  def initialize(name, age, motto)
-    @name = name
-    @age = age
-    @motto = motto
-  end
-
-  def name
-    @name.capitalize
-  end
-
-  def change_age=(age)
-    self.age = age
-  end
-
-end
-
-carolina = HumanBeing.new("carolina", 31, "You snooze, you looze.")
-
-puts carolina.name                              # => Carolina
-
-p carolina                                      # => <HumanBeing:0x00007f8e2000dba0 @name="Carolina", @age=31, @motto="You snooze, you looze.">
-carolina.change_age = 32                        # Ruby synctactical sugar for `carolina.change_age=(32)`
-p carolina                                      # => <HumanBeing:0x00007f8e2000dba0 @name="Carolina", @age=32, @motto="You snooze, you looze.">
-
-p carolina.motto                                # "You snooze, you looze."
-carolina.motto = "Early bird gets the worm!"  # Ruby synctactical sugar for `carolina.motto=("Early bird gets the worm!")`
-p carolina.motto																# "Early bird gets the worm!"
-
-```
-On `line 66`, an object called `carolina` is instantiated from the `HumanBeing` class by calling the class method `::new`. The arguments "carolina", 32, and "You snooze, you looze." are passed to the `initialize` method via the `::new` class method where they are assigned to the appropriate instance variables keeping track of the objects' states. 
-
-The `attr_accessor` on `line 47` creates a getter and setter method for the `@motto` instance variable. The `motto` instance method is called outside of the class on `line 74` by invoking the instance method on the object `carolina`. This will output the string "You snooze, you looze." referenced by the `@motto` instance variable. On `line 75`, the setter method created by the `attr_accessor` is invoked with additional syntax; `carolina.motto = "Early bird gets the worm!"`. This is Ruby synctactical sugar for `carolina.motto=("Early bird gets the worm!")`. This is an example of how the `attr_accessor` creates both getter and setter methods and how these methods are called outside of the class definition. 
-
-The `attr_writer` on `line 48` creates only setter method for the instance variable `@age`. This example shows how a setter method can be called within a class definition. The setter method `age` is invoked within the `change_age=()` instance method on `line 61`. Notice that `self` is prepended to the `age` method, this is so that ruby can distinguish between a local variable being initialized and a setter method being invoked within the class definition. Also notice that the `@age` instance variable does not have a getter method and it cannot be accessed outside of the class definition. The `p` inspect method is called on the object `carolina` on `line 70` and `line 72`. Although the `@age` instance variable cannot be accessed outside of the class definition, we can call inspect on an object to retrieve an encoding of an object's object id and its instance variables with their respective values. When `line 70` and `line 72` is executed, the outputs are:
-
-`<HumanBeing:0x00007f8e2000dba0 @name="Carolina", @age=31`
-`<HumanBeing:0x00007f8e2000dba0 @name="Carolina", @age=32`
-
-The setter method invoked on `line 71` changed what the `@age` instance variable references from 31 to 32. The change can be seen when the `p` method is invoked on the `carolina` object on `line 70` and `line 72`.
-
-Lastly, the `@name` instance variable has a manual getter method on `lines 56-58`. Although multiple arguments can be passed to `attr_*` methods and using `attr_*` methods create DRY code, manual getters can be created to manipulate data. The string 'carolina' passed to the `initialize` method on `line 66` gets changed to "Carolina" when the getter method is invoked inside or outside the class defintion. That is why when `line 68` is executed, the string `Carolina` is output to the screen and `nil` is returned because of the `puts` method.  
-_____
-
 ### Instance methods vs. class methods
 
 **Instance methods** are defined within the class body and are the *behaviors* available to all objects instantiated from the same class. Instance methods *expose* the behavior that all objects insantiated from that class share. They are only available for use when an instance of a class is created. Instance variables can be exposed via instance methods.
