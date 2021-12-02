@@ -1,21 +1,24 @@
-# Around 20q 3hrs (180min)
-# last question may take 30min.
-# 19q in 150min is 7.8min each
+Around 20q 3hrs (180min)
+last question may take 30min.
+19q in 150min is 7.8min each
+#### Additional Tips
+This assessment has a different style than the RB109 written assessment,so you should expect several open-ended questions where you will need to explain certain OOP concepts using code examples.
 
-# Specific Topics of Interest
-# - WHAT IS OOP? -----------------------------
-# -->> A Programming model where areas of code that perform certain procedures are sectioned off, allowing programs to become an interaction of many small parts that can be changed/manipulated without affecting the entire program.
+While working through the assessment questions it is useful to run your code often to check it, so make sure to have either ruby document/terminal or an online repl prepared beforehand.
 
-# - WHAT ARE THE BENEFITS OF OOP? ------------
-# By sectioning off code into smaller parts we reduce dependencies and make debugging & maintaining the codebase easier.
+### WHAT IS OOP?
+A Programming model where areas of code that perform certain procedures are sectioned off, allowing programs to become an interaction of many small parts that can be changed/manipulated without affecting the entire program.
 
-# Defining basic classes and leveraging concepts like inheritance to introduce more detailed behaviors means our code is more "DRY" and has a greater level of reusability and flexibility.
+#### Benefits
+* By sectioning off code into smaller parts we reduce dependencies and make debugging & maintaining the codebase easier.
+* Defining basic classes and leveraging concepts like inheritance to introduce more detailed behaviors means our code is more "DRY" and has a greater level of reusability and flexibility.
+* Naming those small parts (i.e. classes & objects) after real-world nouns and modeling them appropriate to the problem, lets programmers think at a higher level of abstraction when designing and helps them break down and solve problems that arise.
 
-# Naming those small parts (i.e. classes & objects) after real-world nouns and modeling them appropriate to the problem, lets programmers think at a higher level of abstraction when designing and helps them break down and solve problems that arise.
+### CLASSES AND OBJECTS
+Classes define our object's attributes & behaviors like templates through the varied use of instance & class variables and instance & class methods. Objects are created from classes and contain a combination of data and methods.
 
-# - CLASSES AND OBJECTS -----------------------
-# -->> Classes define our object's attributes & behaviors like templates through the varied use of instance & class variables and instance & class methods. Objects are created from classes and contain a combination of data and methods.
-# Here, our class Dog is defined with one attribute, a name, and one behavior, access to our attribute. We create a new Dog object by calling #new on class Dog. We pass #new an argument that will be passed to #initialize where it will be assigned the instance variable @name.
+Here, our class `Dog` is defined with one attribute (a name) and one behavior (a method that gives us access to our attribute). We create a new `Dog` object by calling `#new` on class `Dog`. We pass #new an argument that will be passed to #initialize where it will be assigned the instance variable `@name`.
+
 ```ruby
 class Dog
   def initialize(name)
@@ -31,9 +34,9 @@ dog1 = Dog.new('Duke')
 p dog1.name
 ```
 
-# # - INSTANCE VARIABLES vs. CLASS VARIABLES -----
-@name
-# -->> @variables store the state of an object, they're scoped at the object-level and are only accessible via an instance method. They have to be initialized in order to be referenced, so if they're initialized in a method, that method must be called first. If this doesn't happen, the initialization doesn't occur and when referenced the instance variable will return nil.
+### INSTANCE VARIABLES vs. CLASS VARIABLES
+Instance variables have `@` appended to the front of the variable name. They store the state of an object, are scoped at the object-level and are only accessible via an instance method. They have to be initialized in order to be referenced, so if they're initialized in a method, that method must be called first. If this doesn't happen, the initialization doesn't occur and when referenced the instance variable will return nil.
+
 ```ruby #instance variable
 module Capable
   def recharge_energy
@@ -52,8 +55,9 @@ end
 leeya = Human.new
 p leeya.exercise
 ```
-@@number_of_objects
-# -->> @@variables store the state of the class, are scoped at the class-level and can be accessed by both instance & class methods. 
+
+Class variables have `@@` appended to the front of the variable name. They store the state of the class, are scoped at the class-level and can be accessed by both instance & class methods. 
+
 ```ruby #class variable
 class Human
   @@number_of_humans = 0
@@ -76,7 +80,7 @@ p Human.number_of_humans
 p leeya.number_of_humans
 ```
 
-# - HOW TO CALL SETTERS & GETTERS -------------
+#### HOW TO CALL SETTERS & GETTERS
 ```ruby
 class Dog
   attr_accessor :name
@@ -89,32 +93,54 @@ end
 dog1 = Dog.new('Lucky')
 p dog1.name
 ```
-# -->> We call setter methods by name within the class using the keyword self or outside the class by name on an instance of the class.
-# within the class
+We call **setter** methods by name within the class using the keyword self or outside the class by name on an instance of the class.
+
+**within the class**
+
 `self.name = 'Duke'`
-# outside the class on our object
-`dog1.name = 'Duke'` #it's more readable this way but we can also call it without using Ruby's syntactic sugar, like so:
-`dog1.name=('Duke')` #parenthesis are optional
-# -->> We call getter methods by name both within the class or outside of the class on an instance of our class.
-# within the class
-`name` # value of instance variable is returned
-# outside the class on our object
-`dog1.name` # value of instance variable is returned
 
-# - USING ATTR_* TO CREATE SETTER & GETTER METHODS
-# -->> We can use Ruby's built-in attr_* methods to create our getters, setters and instance variables them for us. attr_* methods take symbols as arguments and use them to create getters, setters and instance variables of the same name.
-`attr_reader :name` # there #attr_reader creates a getter method and instance variable using the same name as the argument being passed to it
+**outside the class on our object**
 
-`attr_writer :name` # there #attr_writer creates a setter method and instance variable using the same name as the argument being passed to it
+`dog1.name = 'Duke' # using Ruby's syntactic sugar`
 
-`attr_accessor :name` # here #attr_accessor creates a getter method, a setter method and an instance variable using the same name as the argument being passed to it
+We call **getter** methods by name both within the class or outside of the class on an instance of our class.
 
-# - INSTANCE METHODS vs. CLASS METHODS
-# Both methods are defined within our class.
-# -->> An instance method is an instance-level method that's available to all objects instantiated from the same class. It has access to instance and class variables and serves as a way for us to expose information about the state of our object and class.
-# -->> A class method is a class-level method. It has access to class variables only and serves as a way for us to expose information about the state of our class. It's called directly on the class itself whether an object has been instantiated or not.
-# The difference between the two in syntax is that we define a class method with either the class name or the keyword 'self' affixed to the front of the method name.
-```
+**within the class**
+
+`name # value of instance variable is returned`
+
+**outside the class on our object**
+
+`dog1.name # value of instance variable is returned`
+
+### USING ATTR_* TO CREATE SETTER & GETTER METHODS
+Ruby's has built-in `attr_*` methods that take symbols as arguments and use them to create a getter & setter method and an instance variable of the same name. 
+
+#### Benefit(s)
+`attr_*` methods can take multiple arguments at once which saves us a lot of time and lines of code (all those individual getter & setter methods that don't need to be written!)
+
+#### Implementation
+* `attr_reader :name`
+
+`#attr_reader` creates a getter method and instance variable using the same name as the argument being passed to it
+
+* `attr_writer :name`
+
+`#attr_writer` creates a setter method and instance variable using the same name as the argument being passed to it
+
+* `attr_accessor :name` 
+
+`#attr_accessor` creates a getter method, a setter method and an instance variable using the same name as the argument being passed to it
+
+### INSTANCE METHODS vs. CLASS METHODS
+An instance method is an instance-level method defined within our class that's available to all objects instantiated from the same class. It has access to instance and class variables and serves as a way for us to expose information about the state of our object and class.
+
+A class method is a class-level method defined within our class. It has access to class variables only and serves as a way for us to expose information about the state of our class. It's called directly on the class itself whether an object has been instantiated or not.
+
+**The difference between the two in syntax is that we define a class method with either the class name or the keyword 'self' affixed to the front of the method name.**
+
+#### Implementation
+```ruby
 class Human
   attr_reader :name
 
@@ -149,62 +175,120 @@ p Human.number_of_humans # calling a class method
 p leeya.number_of_humans # demos how instance methods have access to @@vars too
 ```
 
-# - METHOD ACCESS CONTROL
-# -->> Access control means restricting access to things. In Ruby, we apply this concept to our methods thru the use of access modifiers. We can decide if we want certain methods to be public, protected, or private by defining them under access modifiers, keywords 'protected' or 'private'. There is a 'public' keyword too but methods not defined under either keywords are automatically public but you can use the k)
+### METHOD ACCESS CONTROL
+Access control means restricting access to things, in this case methods hence the name "**Method** Access Control". In Ruby, we apply this concept to our methods thru the use of *access modifiers*, which are keywords **public**, **protected**, and **private**. If a method is defined under **private** it becomes a private method, **protected** a protected method and **public** a public method though any method not defined under any of these keywords is automatically made public.
 
-# - PUBLIC, PROTECTED, and PRIVATE methods 
-# -->> PUBLIC methods can be called both inside and outside the class
-# -->> PRIVATE, remember it can only be called on ourselves (the calling object)
-# -->> PROTECTED. These methods like private methods, cannot be called outside of the class. However, inside the class we can call these methods on ourselves (i.e. the calling object) and other's like us (objects of the same class). Being able to call methods on other objects of the same class allows us to share data between class instances.
-class Dog
-  def initialize(name, age)
+A public method can be accessed (i.e. called) both inside and outside the class.
+
+A private method can only be called within the class on ourselves (i.e the calling object).
+
+A protected method like a private method can only be called within the class but it can be called not only on the calling object but other objects of the same class. We use this modifier when we want to share data between class instances.
+
+#### Benefit(s)
+* Access modifiers give us the power to control the level of accessibility to our methods, allowing us to hide or expose functionality only to the parts that need it. In that way it's a form of data protection.
+
+#### Implementation
+```ruby
+class Student
+  attr_reader :name, :volunteer
+
+  def initialize(name, grade, volunteer=false)
     @name = name
-    @age = age
+    @grade = grade
+    @volunteer = volunteer
   end
 
-  def >(other_dog) # 'other_dog' and 'self' are different objects but they're objects of the same class which is why #age works
-    self.age > other_dog.age
+  def >(other_student)
+    if grade > other_student.grade
+      "#{name}'s grade is higher."
+    else
+      "#{other_student.name}'s grade is higher."
+    end
   end
   
-  protected
-  
-  def age
-    calculate_age
+  def grade
+    volunteer ? @grade + 3 : @grade
+    # calculate_grade
   end
 
-  private
+  # private
   
-  def calculate_age
-    @age * 7
+  # def calculate_grade
+  #   volunteer ? @grade + 3 : @grade
+  # end
+end
+
+leeya = Student.new('Leeya', 90)
+andrew = Student.new('Andrew', 90, true)
+rich = Student.new('Rich', 95)
+
+p leeya.grade
+p andrew.grade
+p rich.grade
+# p leeya.calculate_grade # will error out, trying to access private method
+p leeya > andrew
+p andrew > rich
+```
+Here, our `#grade` method is public and can be called from outside the class. The implementation details of the method though are within the private method `#calculate_grade` which cannot be accesed from outside the method but can be called within the method on the calling object.
+If we don't want our student's grades accessible from outside the the class and only want to access them when comparing grades amongst other students (i.e. other objects of the same class) we can make `#grade` a protected method.
+
+### Concept
+Definition
+
+#### Benefit(s)
+* 
+#### Implementation
+
+#### REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS
+We can reference and set instance variables in one of two ways. 
+
+* Directly using the instance variable
+```ruby
+class Person
+  def new_address(location) #setting
+    @location = location
+  end
+
+  # referencing
+  def display_name
+    @name
+  end
+
+  def say_hello
+    puts "Hello, I'm #{@name}."
   end
 end
 
-dog1 = Dog.new('Duke', 4)
-dog2 = Dog.new('Lucky', 5)
-p dog1.calculate_age # will error out, trying to access private method
-p dog1.age #
-p dog1 > dog2
-p dog2 > dog1
-
-# - REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS
-# -->> It's better to use getter & setter methods when referencing and setting instance variables rather than doing so directly. 
-class BankAccount
-  attr_reader :name, :acct_number
-
-  def initialize(name)
-    @name = name
-    @acct_number = set_acct_number
+```
+* Using a getter and/or setter method
+```ruby
+class Person
+  def new_address(location) #setting
+    self.location = location
   end
 
-  def set_acct_number
-    # generates a unique 8-digit account #
-    12345678
+  # referencing
+  def display_name
+    name
   end
 
-  def acct_number
-    "XXXX" + @acct_number.to_s[-4..-1]
+  def say_hello
+    puts "Hello, I'm #{name}."
   end
 end
+```
+#### Benefit(s)
+It's better to use getter & setter methods rather than doing so directly with the instance variables.
+
+* Let's say we want to alter how the `name` of an object of the `Person` class is displayed. Maybe instead of 'Leeya Davis' we want 'Davis, Leeya'. 
+
+If we referenced the instance variable directly, we'll have to add this new code to every single method that exposes this data. This means a lot of duplicate code and the chances of missing a method or two are high. 
+
+However, if we're referencing with a getter method we only need to add the necessary code in one place. This allows are code to remain clean and DRY.
+
+* Likewise for our setter method adding and/or changing data stored in our object is 
+
+
 # For example, in this code #acct_number is our custom getter method and we see that whenever we expose the account number (i.e. call this method) we only want the last 4 digits visible. We can still achieve this when referencing the @var directly, but we'll need to sprinkle `"XXXX" + @acct_number.to_s[-4..-1]` wherever we're referencing @acct_number directly. Now, let's say we change our minds and now only want the last 2 digits exposed. If we're referencing the @var directly, we'll have to comb through our code to change every reference whereas by using our getter method, we only need to make the necessary changes to one method.
 # The same goes for setting an @var, even if we choose not to format the data we want to save as state in our object. If we decide later on that we want to manipulate the incoming data before storing it, rather than comb through our code to change each instance of setting the var we can go to one place.
 
@@ -426,9 +510,7 @@ p company1.employees
 # here we have 2 objects being initialized; 'company1' is an instance of the Company class and 'leeya' is an instance of the Employee class. And on the next line we're adding out Employee object 'leeya' to the collection of employees at 'company1' so in this case 'company1' has a collaborator object ('leeya') stored in the 
 
 # Precision of Language
-# Some questions require that you explain code or concepts with words. It's important to explain how code works using precise vocabulary and to pinpoint the causal mechanism at work. In other words, use the right words and don't be vague.
-
-# For example, let's take the following piece of code.
+For example, let's take the following piece of code.
 class Dog
   def initialize(name)
     @name = name
@@ -446,66 +528,8 @@ end
 # The #say_hello instance method which prints a message that includes the dog's name in place of #{@name}. #say_hello returns nil."
 # In programming, we must always concern ourselves with outputs, return value, and object mutations. We must use the right terms when we speak, and not use vague words like "results." Furthermore, we need to be explicit about even the smallest details.
 
-# Additional Tips
-# This assessment has a different style than the RB109 written assessment,so you should expect several open-ended questions where you will need to explain certain OOP concepts using code examples.
-
-# While working through the assessment questions it is useful to run your code often to check it, so make sure to have either ruby document/terminal or an online repl prepared beforehand.
-
 
 # CAROLINA'S NOTES ---------------------------------------
-### Method Access Control
-Protected methods cannot be accessed outside of a class but are accessible within the class. The difference between private methods and protected methods is that protected methods allow access between class instances; instance methods of a class can call protected methods of other objects instantiated from the same class. To make methods protected, the `protected` keyword is called within the class definition and any methods below it are protected methods.
-
-```ruby
-class HumanBeing
-  attr_reader :name
-
-  def initialize(name, age, motto)
-    @name = name
-    @age = age
-    @motto = motto
-  end
-
-  def display_motto
-    motto
-  end
-
-  def ==(other)
-    age == other.age
-  end
-
-  protected
-  attr_reader :age
-
-  private
-  attr_reader :motto
-end
-
-carolina = HumanBeing.new("Carolina", 32, "You snooze, you looze.")       
-roslyn = HumanBeing.new("Roslyn", 33, "Nobody puts baby in the corner!")  
-
-p carolina.name                                                       # => Carolina
-p roslyn.name                                                         # => Roslyn
-
-p carolina.display_motto                                              # => You snooze, you looze. 
-p roslyn.display_motto                                                # => Nobody puts baby in the corner!" 
-
-carolina == roslyn ? (puts "Same age!") : (puts "Not the same age.")  # => Not the same age.
-```
-The code above shows how public methods are public by default and how protected and private methods are used within a class definition as well as how they can be used outside of a class definition. 
-
-All methods are public by default, which is why when the `attr_reader` creates a getter method for the `@name` instance variable on `line 157`, the `name` instance method can be called outside of the class on `line 183` and `line 184`. 
-
-The `protected` access modifer is called on `line 173`, and it makes the getter method `age` created by the `attr_reader` on `line 174` protected. This means that the `age` instance method cannot be called outside of the class. But unlike private methods, protected methods allow access between class instances. In the `==(other)` instance method defined on `lines 169-171`, the `==` method is used to compare the value in `age` between the `carolina` instance and `roslyn` instance. `Line 189` is able to be executed and will output the string "Not the same age" because it is comparing the value returned by the `age` instance method from the `carolina` and `roslyn` instance. Although the `age` method is unavailable outside the class definition, we can use protected methods to allow access between class instances. 
-
-The `protected` access modifer is called on `line 176` and it makes the getter method `motto` created by the `attr_reader` on `line 177` private. This means that the instance method `motto` cannot be accessed outside of the class definition. The `motto` instance method can be used within the class definition and it is on `line 166` where the `display_motto` instance method is explicitly created to expose the return value of the `motto` private instance method. 
-_____
-
-### Referencing and setting instance variables vs. using getters and setters
-
-to be written
-_____
-
 ### Class inheritance
 
 **Class inheritance** occurs when a class (subclass) inherits behavior/s from another class (superclass). The `<` symbol is used to signify inheritance. Class inheritance is used as a way to extract common behaviors among classes and move it to a superclass in order to have logic stored in one place; it removes duplication and creates "DRY" (Don't Repeat Yourself) code. It is a way to create subclasses from a superclass already defined; this makes it easier to create and maintain a program. Class inheritance provides the opportunity to reuse code for functionality and a faster implementation time.
