@@ -168,62 +168,36 @@ p dog1.name
 * Now let's comment out both `#attr_reader` & `#attr_writer` and comment in all other lines of code. From this, we see how `#attr_accessor` uses the name of the argument being passed to it to create a setter method, a getter method, and an instance variable. All of our getter (`#name`) & setter (`#name=`) method calls run successfully (i.e. they've been created) and they all return the value of our instance variable `@name` at that point in time.
 
 
-#### REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS
-We can reference and set instance variables in one of two ways. 
+#### REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS (OOP6)
+We can reference and set instance variables in one of two ways. Either directly by using the instance variables themselves or indirectly by using getter & setter methods.
 
-* Directly using the instance variable
-```ruby
-class Person
-  def new_address(location) #setting
-    @location = location
-  end
-
-  # referencing
-  def display_name
-    @name
-  end
-
-  def say_hello
-    puts "Hello, I'm #{@name}."
-  end
-end
-
-```
-* Using a getter and/or setter method
-```ruby
-class Person
-  def new_address(location) #setting
-    self.location = location
-  end
-
-  # referencing
-  def display_name
-    name
-  end
-
-  def say_hello
-    puts "Hello, I'm #{name}."
-  end
-end
-```
 #### Benefit(s)
-It's better to use getter & setter methods rather than doing so directly with the instance variables.
+It's better to use getter & setter methods rather than referencing & setting data directly with instance variables for the following reasons:
 
-* Let's say we want to alter how the `name` of an object of the `Person` class is displayed. Maybe instead of 'Leeya Davis' we want 'Davis, Leeya'. 
+* Let's say we want to alter how a particular piece of data in our object is displayed. If we reference the instance variable directly, we'll have to add this display-altering code to every method that exposes this data. This will cause a lot of duplicate code and the chances of errors being raised from missing a method are high. If we're referencing this data with a getter method, we only need to add the display-altering code once and in one place; the getter method. This allows our code stays duplicate free (i.e. DRY) and accurate because we know the change will be program-wide with no methods accidentally missed.
 
-If we referenced the instance variable directly, we'll have to add this new code to every single method that exposes this data. This means a lot of duplicate code and the chances of missing a method or two are high. 
+* Similarly for our setter method, if we wanted to validate input before updating/changing our objects state, we'd have to add our validating code to every method that may add/alter data in our instance variable. By using a setter method, we bottleneck where any additions/alterations can be made and if we want to add validation code, it only needs to be done in one place; the setter method.
 
-However, if we're referencing with a getter method we only need to add the necessary code in one place. This allows are code to remain clean and DRY.
+```ruby #DOUBT A CODE EXAMPLE WILL BE REQUIRED...
+class Person
+  def new_address(location) # SETTING
+    @location = location  # setting directly with our instance variable
+    self.location = location # setting with a method
+  end
 
-* Likewise for our setter method, if we wanted to add some sort of validation we'd have to do so in every method that may add/alter our data. By using a setter method, we bottleneck where any additions/alterations can be done and if we want to add/update validation code, it only needs to be done in one place.
+  def display_name
+    @name # referencing directly with our instance variable
+    name # referencing with our getter method
+  end
+end
+```
 
-
-### INSTANCE METHODS vs. CLASS METHODS
+### INSTANCE METHODS vs. CLASS METHODS (OOP7)
 An instance method is an instance-level method defined within our class that's available to all objects instantiated from the same class. It has access to instance and class variables and serves as a way for us to expose information about the state of our object and class.
 
 A class method is a class-level method defined within our class. It has access to class variables only and serves as a way for us to expose information about the state of our class. It's called directly on the class itself whether an object has been instantiated or not.
 
-**The difference between the two in syntax is that we define a class method with either the class name or the keyword 'self' affixed to the front of the method name.**
+**The difference between the two in syntax is that we define a class method with either the class name or the keyword `self` appended to the front of the method name.**
 
 #### Implementation
 ```ruby
@@ -260,74 +234,51 @@ p leeya.what_am_i?
 p Human.number_of_humans # calling a class method
 p leeya.number_of_humans # demos how instance methods have access to @@vars too
 ```
+Here are what the followng method calls demonstrate:
+* In this code, `Human.what_am_i?`, we're calling the class method `#what_am_i?` on class `Human`. This code in particular shows that we can call a class method even if no object has been instantiated. 
+* In this code, `leeya.what_am_i?`, we're calling the instance method `#what_am_i?` on our newly instantiated object `leeya`. This is a simple instance method being called. 
+* In this code, `Human.number_of_humans`, we're calling the class method `#number_of_humans` on class `Human`. This is a simple class method being called, this time it's exposing state about our class (the total number of objects that have been instantiated). 
+* In this code, `leeya.number_of_humans`, we're calling the instance method `#number_of_humans` on the object `leeya`. This shows that instance methods have access to class variables and are capable of exposing information about the state of the class too.
 
 
-### ENCAPSULATION
-A form of data protection that let's us make certain data/functionality of an object unavailable to access and/or change from the outside without explicit intention. 
+### ENCAPSULATION (OOP8)
+Hiding certain data/functionality of an object by making it unavailable to access and/or change from the outside without explicit intention. 
 
-#### Benefit(s) (similar to MAC section)
-* Encapsulation gives us the power to control the level of accessibility to our program, allowing us to hide or expose functionality only to the users and/or parts of the program that need it. 
+#### Benefit(s)
+* It gives us the power to control the level of accessibility to our program, allowing us to expose functionality only to the users and/or parts of the program that need it. 
 
-#### Implementation
-##### Encapsulation can be achieved in 1 of 2 ways.
-1. Through the use of Method Access Modifiers (see previous section: prevMAC) and
-2. By **not** creating methods that interact with the data we want to hide.
+#### Implementation done in 1 of 2 ways
+1. By **not** creating methods that interact with the data we want to hide
 ``` ruby
 class Student
-  attr_reader :name, :volunteer
+  attr_accessor :name
+  attr_reader :grade
 
-  def initialize(name, grade, volunteer=false)
+  def initialize(name, grade)
     @name = name
     @grade = grade
-    @volunteer = volunteer
-  end
-
-  def >(other_student)
-    if grade > other_student.grade
-      "#{name}'s grade is higher."
-    else
-      "#{other_student.name}'s grade is higher."
-    end
-  end
-  
-  protected
-
-  def grade
-    calculate_grade
-  end
-
-  private
-  
-  def calculate_grade
-    volunteer ? @grade + 3 : @grade
   end
 end
 
 leeya = Student.new('Leeya', 90)
-andrew = Student.new('Andrew', 90, true)
-rich = Student.new('Rich', 95)
-
-# p leeya.grade
-# p andrew.grade
-# p rich.grade
-# p leeya.calculate_grade # will error out, trying to access private method
-p leeya > andrew
-p andrew > rich
+p leeya.grade
+leeya.grade = 100
 ```
-Here by not creating a setter method for our @acct_number we're not allowing this piece of data to be changed or manipulated from the outside.
+Here by not creating a setter method for our instance variable `@grade` we're not allowing this piece of data to be changed or manipulated from the outside. This can be seen when our code `leeya.grade = 100`, which is trying to change the value of the instance variable `@grade` in the object `leeya`, raises a `NoMethodError`.
+
+2. Through the use of Method Access Modifiers (OOP9)
 
 
-### METHOD ACCESS CONTROL (prevMAC)
-Access control means restricting access to things, in this case methods hence the name "**Method** Access Control". In Ruby, we apply this concept to our methods thru the use of *access modifiers*, which are keywords **public**, **protected**, and **private**. If a method is defined under **private** it becomes a private method, **protected** a protected method and **public** a public method though any method not defined under any of these keywords is automatically made public.
+### METHOD ACCESS CONTROL (OOP9)
+Access control means restricting access to things, in this case methods hence the name "**Method** Access Control". In Ruby, we apply this concept to our methods thru the use of *access modifiers*, which are Ruby's built-in keywords **public**, **protected**, and **private**. If a method is defined under **private** it's a private method, **protected** it's a protected method and **public** it's a public method. An important note though is any method not defined under a keyword is automatically made public.
 
 A public method can be accessed (i.e. called) both inside and outside the class.
 
 A private method can only be called within the class on ourselves (i.e the calling object).
 
-A protected method like a private method can only be called within the class but it can be called not only on the calling object but other objects of the same class. We use this modifier when we want to share data between class instances.
+A protected method like a private method can only be called within the class but it can be called not only on the calling object but other objects of the same class. We use this modifier when we want to share data between instances of the same class.
 
-#### Benefit(s)
-* Access modifiers give us the power to control the level of accessibility to our methods, allowing us to hide or expose functionality only to the parts that need it. In that way it's a form of data protection.
+#### Benefit(s) (See ENCAPSULATION, OOP8)
 
 #### Implementation
 ```ruby
@@ -348,43 +299,41 @@ class Student
     end
   end
   
-  def grade
-    volunteer ? @grade + 3 : @grade
-    # calculate_grade
+  def show_grade
+    "My name is #{name} and my grade is #{self.grade}."
   end
 
-  # private
+  def grade
+    calculate_grade
+  end
+
+  private
   
-  # def calculate_grade
-  #   volunteer ? @grade + 3 : @grade
-  # end
+  def calculate_grade
+    volunteer ? @grade + 3 : @grade
+  end
 end
 
 leeya = Student.new('Leeya', 90)
 andrew = Student.new('Andrew', 90, true)
-rich = Student.new('Rich', 95)
 
 p leeya.grade
-p andrew.grade
-p rich.grade
-# p leeya.calculate_grade # will error out, trying to access private method
+p andrew.show_grade
+p leeya.calculate_grade # will error out, trying to access private method
 p leeya > andrew
-p andrew > rich
 ```
-Here, our `#grade` method is public and can be called from outside the class. The implementation details of the method though are within the private method `#calculate_grade` which cannot be accesed from outside the method but can be called within the method on the calling object.
+The `#grade` method is a public method. This code shows how public methods can be called from both inside and outside the class. From inside the class, we call `#grade` within our `#show_grade` method and from outside the class we call `#grade` on our instantiated `Student` object `leeya`. Both method calls run with no errors. 
+
+The `#calculate_grade` method is a private method. This code shoes how private methods can only be called from within the class and only on the calling object. 
+The implementation details of the method though are within the private method `#calculate_grade`. This means that we can't call `#calculate_grade` from outside the class and that if we do use it inside the class it can only be called on ourselves, the calling object. This aspect of private methods is demonstrated when the code `leeya.show_grade` is run and outputs as expected and the code `p leeya.calculate_grade` raises the `NoMethodError` as expected.
 If we don't want our student's grades accessible from outside the the class and only want to access them when comparing grades amongst other students (i.e. other objects of the same class) we can make `#grade` a protected method.
 
 
-
-### CLASS INHERITANCE
-When one class inherits behaviors from another class. The class inheriting the behavior is called the subclass, the one providing the behavior is the superclass. Present where there's a *is-a* relationship between classes.
+### CLASS INHERITANCE (OOP10)
+When one class inherits behaviors from another class. The class inheriting the behavior is called the subclass, the one providing the behavior is the superclass. Applicable when there's a *is-a* relationship between classes (e.g. a dog **is-an** animal, jazz **is-a** type of music, etc).
 
 #### Benefit(s)
-This domain model based on hierarchy allows us to:
-
-* extract common behavior to the superclass to be reused by subclasses, helping us avoid duplication in our code
-
-* subclasses are left to define and implement fine-grained, detailed behavior.
+This domain model based on hierarchy allows us to extract common behavior to the superclass to be reused by subclasses > increases the reusability and flexibility of our code and reduces duplication in our codebase.
 
 #### Implementation
 ```ruby
@@ -401,19 +350,19 @@ class ShoeMaking < Hobbies
 def find_workshop; end
 end
 ```
-Here the both `Sewing` and `ShoeMaking` subclass `Hobbies`. Sewing is-a Hobbie as is Shoemaking. The common behavior `#take_class` and `#buy_supplies` have been extracted to the superclass `Hobbies` while specialized behavior specific to each subclass is defined within them (i.e. `#remodel_room` and `#find_workshop`)
+Here both `Sewing` and `ShoeMaking` subclass `Hobbies`. `Sewing` **is-a** `Hobbie` as is `Shoemaking`. The common behavior `#take_class` and `#buy_supplies` have been extracted to the superclass `Hobbies` while specialized behavior specific to each subclass is defined within them. `#remodel_room` within `Sewing` and `#find_workshop` within `ShoeMaking`
 
 
-### Modules
+### Modules (OOP11)
 Used to group reusable code in one place; they are used for interface inheritance, namespacing, and to store module methods.
 
 #### Benefit(s) & Implementation
 * Interface Inheritance
-Another way we achieve polymorphism and keep our code flexible and DRY in design. We add common functionality to similar classes where there's no hierarchical relationship but there is an association (i.e. a "has-a" relationship). We do this by mixing in modules using Ruby keyword `include` (as many as we want). This usage is
+Another way we achieve polymorphism and keep our code flexible and DRY in design. In a module, we define common functionality found in similar classes where there's no hierarchical relationship but there is an association; we call this a **has-a** relationship. We then add the module containing the common behavior to the classes by mixing them in using the Ruby keyword `include` (we can mix in as many modules as we want in a class).
 ```ruby
 module Measurable
   def measure
-    puts "#{self.class} can use me!"
+    puts "A #{self.class} can use me to measure!"
   end
 end
 
@@ -428,13 +377,13 @@ end
 Seamstress.new.measure
 Cobbler.new.measure
 ```
-Here we're mixing the module `Measurable` in to two classes, `Seamstress` and `Cobbler` because the classes are similar and have a "has-a" relationship (i.e. a seamstress and a cobbler have an ability to measure). Below the class definitions, we're calling the `#measure` method that each class now has access to, on each newly instantiated object. We see this in our output output.
+Here we're mixing the module `Measurable` in to two classes, `Seamstress` and `Cobbler` because the classes are similar and have a **has-a** relationship (i.e. a seamstress and a cobbler both have an ability to measure). After mixing the module in, we're able to call the `#measure` method that each class now has access to and we do so on each newly instantiated object.
 
 * Namespacing (scope/namespace resolution operator)
-When we organize and group classes, methods, and constants. This allows us to easily recognize related classes and reduces the change of classes colliding with similarly named classes in a code base.
+When we organize and group classes, methods, and constants. This allows us to easily recognize related classes and reduces the chance of classes colliding with similarly named classes in a code base.
 ```ruby
 module Food
-  class Korean; end
+  class Korean end
 end
 
 module Language
@@ -444,7 +393,7 @@ end
 food = Food::Korean.new
 korean = Language::Korean.new 
 ```
-Here we're creating a comprehensive app about everything there is to know about Korea. We've decided that it'd be best to section off our data and functionality by major areas, `Food` and `Language`. And so, we use modules to group both our `Korean` classes into their respective named spaces.
+Here we're pretending to create a comprehensive app about everything there is to know about Korea. We've decided that given how extensive each topic is, it'd be best to section off our data and functionality by major areas like `Food` and `Language`. And so, we use modules to group both our `Korean` classes into their respective named spaces.
 
 * Module Methods
 When we use modules as containers for methods that seem out of place in our code.
@@ -458,54 +407,56 @@ ModuleName::class_method
 Because we prepended `self` to our method definition, we can call the method either directly on the module or by using namespacing.
 
 
-### Class Inheritance vs Interface Inheritance
+### Class Inheritance vs Interface Inheritance (OOP12)
 #### Class Inheritance
-* models a hierarchical domain, a "is-a" relationship
+* models a hierarchical domain between classes, **is-a** relationship
 * one type inherits from another, thereby specializing the type of superclass.
 * a class can only subclass from one class
 
 #### Interface Inheritance
-* doesn't inherit from another type, rather inherits the interface provided by the mixed in module
+* models association between classes, **has-a** relationship
+* doesn't inherit from another type, rather inherits the interface provided by the mixed in module in a 
 * doesn't result in a specialized type
 * a class can have as many mixed in modules as we want
 * objects cannot be instantiated from a module
 
 
-### POLYMORPHISM
+### POLYMORPHISM (OOP13)
 When objects of different types respond to the same method invocation in different ways. 
 
 #### 2 main ways this is implemented are
 1. Polymorphism thru inheritance
-Benefits are the same as 'Class Inheritance' & 'Interface Inheritance' (see `Modules` for code)
 ``` ruby
-class Hobbies # class inheritance
+class Hobbies
   def start_project
     select_pattern
   end
 
-  def select_pattern; end
+  def select_pattern
+    puts "First we need a pattern."
+  end
 end 
 
 class Sewing < Hobbies
   def start_project
-    super #allows us to call methods earlier in the method lookup path
-    "Let's get sewing!"
+    super
+    puts "Let's get sewing!"
   end
 end
 
 class ShoeMaking < Hobbies
   def start_project
-    "Let's get shoe making!"
+    puts "Let's get shoe making!"
   end
 end
 
 hobbies = [Sewing.new, ShoeMaking.new]
-hobbies.each { |hobby| p hobby.start_project }
+hobbies.each { |hobby| hobby.start_project }
 ```
-Here our two different objects from the `Sewing` and `ShoeMaking` class respond to the same method call `#start_project`. The `Sewing` class by inheriting the method, `super` can be added to specialize the method further. The `ShoeMaking` class by overriding the inherited `#start_project` method entirely.
+Here we have polymorphism through inheritance, 2 different but related objects responding to the same method call. Although `Sewing` and `ShowMaking` are different classes, they're related because they both subclass `Hobbies`.
+First we initialize the local variable `hobbies` to a 2-element `Array` where the elements are two objects instantiated from different classes; one from the `Sewing` class and the other from the `ShoeMaking` class. On the next line, we're iterating through our `hobbies` array, passing each object to the block where we call the same method on them, `#start_project`. This is where polymorphism happens, these two different objects are responding to the same method call. The `Sewing` class uses the built-in Ruby keyword `super` to specialize the implementation of the class inherited method `#start_project` meanwhile the `ShoeMaking` class overrides it entirely.
 
 2. Polymorphism through duck-typing
-Objects not only of different types but objects that are completely unrelated respond to the same method call
 ``` ruby
 class Illustrator
   def draw
@@ -521,17 +472,17 @@ end
 
 class Cards
   def draw
-    "Taking 1 card..."
+    "Take 1 card..."
   end
 end
 
 [Illustrator.new, GunSlinger.new, Cards.new].each { |object| p object.draw }
 ```
-Here we have 3 completely unrelated objects, `Illustrator`, `'GunSlinger`, `Cards` responding to the same method call `#draw`.
+Polymorphism through duck-typing is when objects that are not only of different types, but that are completely unrelated, respond to the same method call. Here we have 3 different objects being instantiated from the completely unrelated classed `Illustrator`, `'GunSlinger`, and `Cards`. The objects are being instantiated in an array that is being iterated through. With each iteration, each object gets passed to the block where the method `#draw` is called on it. This is where polymorhism is occurring, even though these objects are different and completely unrelated, they're responding to the same method call, `#draw`, with different implementations.
 
 
-### METHOD LOOKUP PATH
-The order in which classes are inspected when a method is called. When a method is called Ruby will first look for it's definition in the current class, then proceed further up the lookup path until it finds a method of the same name. To see this in action we use the class method #ancestors which returns an array of class names in the lookup path based on the order they're checked.
+### METHOD LOOKUP PATH (OOP14)
+The order in which classes are inspected when a method is called. When a method is called Ruby will first look for it's definition in the current class, then proceed further up the lookup path until it finds a method of the same name. To see this in action we use the class method `#ancestors` which returns an array of class names in the lookup path based on the order they're checked.
 ```ruby
 module Downloadable
 end
@@ -549,12 +500,15 @@ class Digital < Books
   include Lendable
   include Downloadable
 end
-p PaperBack.ancestors
-p Digital.ancestors
+puts "----PaperBack Method Lookup Path----"
+puts PaperBack.ancestors
+puts ""
+puts "----Digital Method Lookup Path----"
+puts Digital.ancestors
 ```
-Here we see for a method called on an instance of the PaperBack class, Ruby would look for it in the following order until it is found `PaperBack > Books > Object > Kernel > BasicObject` if no method is found a `NoMethodError` is raised.
+Here we see for a method called on an instance of the `PaperBack` class, Ruby will look for a method of the same name first in the class of the calling object then through each subsequent parent class until it is found. If no method is found a `NoMethodError` is raised. For the `PaperBack` class, the lookup path is as follows: `PaperBack > Books > Object > Kernel > BasicObject`.
 
-`Digital > Downloadable > Lendable > Books > Object > Kernel > BasicObject`Here Ruby first checks the class, then any mixed in modules from the last one mixed in to the first (bottom - up)
+For a method called on an instance of the `Digital` class, Ruby will look in a similar order. The only difference is after first checking in the current class of the calling object, Ruby will look through any mixed in modules from the last one mixed in, to the first (bottom-up). So for the `Digital` class, the lookup path is: `Digital > Downloadable > Lendable > Books > Object > Kernel > BasicObject`.
 
 Remember this tricky example!
 ```ruby
@@ -576,11 +530,10 @@ p Bar::Fooey.ancestors
 ```
 (X) `Fooey > Foo2 > Bar > Foo1 > Object > Kernel > BasicObject`
 (O) `Bar::Fooey > Foo2 > Object > Kernel > BasicObject`
-
 Class Fooey doesn't inherit from a module, it's just stored in it
 
 
-### SELF
+### SELF (OOP15)
 Using `self` allows us to be explicit about what our program is referencing. What `self` refers to depends on what scope it's used in.
 
 When used within an instance method it refers to the instance itself (i.e. the calling object)
@@ -708,3 +661,5 @@ company1.employees << leeya
 p company1.employees
 ```
 Here we have 2 objects being instantiated; `company1` is an instance of the `Company` class and `leeya` is an instance of the `Employee` class. On the next line we're adding our `Employee` object `leeya` to the collection of employees in `company1`. Here, `leeya` is a collaborator object`company1` has a collaborator object (`leeya`).
+
+# ****************** RETURN TO METHOD ACCESS CONTROL TO FINISH!!! **********************
