@@ -1,17 +1,19 @@
+Interview is more like a conversation, it's okay to ask; Did I answer your question?; Was that enough detail?; Do you want me to go into it more?
+
+Won't be able to past in code snippets in interview
+
+Also, Interview code examples should be simple but not basic-basic
+
+* Before the interview clear off table, write Nouns for code examples!
+
 #### Additional Tips
 Written & Interview are a mix of Conceptual & Code-Based Questions
 
-Read through all the questions first, you may end up going into detail
-
 Don't add more abstraction than needed in your explanation (e.g. talking about simple classes & objects don't add an attr_*)
-
-This assessment has a different style than the RB109 written assessment,so you should expect several open-ended questions where you will need to explain certain OOP concepts using code examples.
-
-While working through the assessment questions it is useful to run your code often to check it, so make sure to have either ruby document/terminal or an online repl prepared beforehand.
 
 Precision of Language: In programming, we must always concern ourselves with outputs, return value, and object mutations. We must use the right terms when we speak, and not use vague words like "results." Furthermore, we need to be explicit about even the smallest details.
 
-### WHAT IS OOP? (OOP1)
+### WHAT IS OOP?
 A Programming model where areas of code that perform certain procedures are sectioned off, allowing programs to become an interaction of many small parts that can be changed/manipulated without affecting the entire program.
 
 
@@ -21,10 +23,11 @@ A Programming model where areas of code that perform certain procedures are sect
 * Naming those small parts (i.e. classes & objects) after real-world nouns and modeling them appropriate to the problem, lets programmers think at a higher level of abstraction when designing and helps them break down and solve problems that arise.
 
 
-### CLASSES AND OBJECTS (OOP2)
-Classes are like templates, they define our object's attributes & behaviors through the use of instance & class variables and instance & class methods. Objects are created from classes and contain the combination of attributes and behaviors outlined in the class definition.
+### CLASSES AND OBJECTS
+Classes define our object's attributes & behaviors like templates through the varied use of instance & class variables and instance & class methods. Objects are created from classes and contain a combination of data and methods.
 
-#### Implementation
+Here, our class `Dog` is defined with one attribute (a name) and one behavior (a method that gives us access to our attribute). We create a new `Dog` object by calling `#new` on class `Dog`. We pass #new an argument that will be passed to #initialize where it will be assigned the instance variable `@name`.
+
 ```ruby
 class Dog
   def initialize(name)
@@ -39,39 +42,33 @@ end
 dog1 = Dog.new('Duke')
 p dog1.name
 ```
-Here, our class `Dog` is defined with one attribute (a name) and one behavior (a method that exposes that attribute). We created a new `Dog` object by calling `#new` on class `Dog` and passing it a required argument that'll be passed to `#initialize` where it will be assigned to the instance variable `@name`. To sum up, we've instantiated a `Dog` object called `dog1` with one attribute (a name) and one behavior (the ability to tell us it's name.)
 
 
-### INSTANCE VARIABLES vs. CLASS VARIABLES (OOP3)
-Instance variables have `@` appended to the front of the variable name. They store the state of an object, are scoped at the object-level and are only accessible via an instance method. They have to be initialized in order to be referenced. If they're initialized in a method, that method must be called first. If this doesn't happen, the initialization doesn't occur and when referenced the instance variable will return nil.
+### INSTANCE VARIABLES vs. CLASS VARIABLES
+Instance variables have `@` appended to the front of the variable name. They store the state of an object, are scoped at the object-level and are only accessible via an instance method. They have to be initialized in order to be referenced, so if they're initialized in a method, that method must be called first. If this doesn't happen, the initialization doesn't occur and when referenced the instance variable will return nil.
+
 ```ruby #instance variable
 module Capable
-  def recharge
+  def recharge_energy
     @energy = true
   end
 end
 
 class Human
   include Capable
-  
-  attr_reader :energy
 
   def exercise
-    @energy ? "I can exercise!" : "I can't exercise"
+    "I can exercise!" if @energy
   end
 end
 
 leeya = Human.new
-p leeya.energy
-p leeya.exercise
-leeya.recharge
-p leeya.energy
 p leeya.exercise
 ```
-Here, we see an important aspect of instance variables demonstrated. Until we run the `#recharge` method, our instance variable `@energy` isn't initialized and returns `nil`, we see this in the output from `leeya.energy` and `leeya.exercise`. After we call `#recharge` it initializes the instance variable `@energy` to `true`, we see this in the output when we call the previous 2 instant methods again.
 
 Class variables have `@@` appended to the front of the variable name. They store the state of the class, are scoped at the class-level and can be accessed by both instance & class methods. 
-```ruby
+
+```ruby #class variable
 class Human
   @@number_of_humans = 0
 
@@ -91,14 +88,10 @@ end
 leeya = Human.new
 p Human.number_of_humans
 p leeya.number_of_humans
-darlene = Human.new
-p Human.number_of_humans
-p darlene.number_of_humans
 ```
-Here, we see how instance and class methods both have access to class variables. `@@number_of_humans` is initialized to zero in the definition of our `Human` class and every time an object is instantiated, the value of `@@number_of_humans` increases by 1. After we create the object `leeya` from the `Human` class, we call our instance method `#number_of_humans` on it and we call our class method `#number_of_humans` on our `Human` class. Both output the correct number of objects created thus far, showing that both have access to the class variable. We see it again when we instantiate another object from the `Human` class (`darlene`) and run the same methods, the count has increased by 1.
 
 
-#### HOW TO CALL SETTERS & GETTERS (OOP4)
+#### HOW TO CALL SETTERS & GETTERS
 ```ruby
 class Dog
   attr_accessor :name
@@ -106,66 +99,50 @@ class Dog
   def initialize(name)
     @name = name
   end
-
-  def change_name(new_name)
-    name = new_name # add & remove `self.` here
-  end
-
-  def speak
-    "My name is #{name}."
-  end
 end
 
 dog1 = Dog.new('Lucky')
 p dog1.name
-dog1.change_name('Duke')
-p dog1.name
-dog1.name = 'Bo'
-p dog1.name
-p dog1.speak
 ```
-How we call **setter** methods depends on whether we're calling it inside or outside of the class.
+We call **setter** methods by name within the class using the keyword self or outside the class by name on an instance of the class.
 
-Here when calling our setter method `#name=` **within the class** in `#change_name`, we have to call it with the keyword `self` appended to the front like this `self.name = new_name`. If we don't, Ruby will think we're initializing a local variable instead of calling our setter method and the data won't be changed. We see this when we first run the code without `self.` appended to the front of `name`, `dog1`'s name remains `Lucky`. If we run the code again, this time with `self.` appended, `dog1`'s name changes from `Lucky` to `Duke`.
+**within the class**
 
-When calling the setter method `#name=` **outside the class** the syntax when using Ruby's syntactic sugar is `dog1.name = 'Duke'`. Without the added sugar we'd call it like a regular method: `dog1.name=('Duke')`.
+`self.name = 'Duke'`
 
-Calling the **getter** method `#name` both within & outside of the class, returns the same thing, the value of our instance variable `@name`. We see this demonstrated in the numerous calls to `#name` outside of the class and when we invoke the `#speak` method, its implementation includes our getter method.
+**outside the class on our object**
+
+`dog1.name = 'Duke' # using Ruby's syntactic sugar`
+
+We call **getter** methods by name both within the class or outside of the class on an instance of our class.
+
+**within the class**
+
+`name # value of instance variable is returned`
+
+**outside the class on our object**
+
+`dog1.name # value of instance variable is returned`
 
 
-### USING ATTR_* TO CREATE SETTER & GETTER METHODS (OOP5)
-Ruby has built-in `attr_*` methods that take symbols as arguments and use them to create a getter & setter method and an instance variable of the same name. 
+### USING ATTR_* TO CREATE SETTER & GETTER METHODS
+Ruby's has built-in `attr_*` methods that take symbols as arguments and use them to create a getter & setter method and an instance variable of the same name. 
 
 #### Benefit(s)
-`attr_*` methods can take multiple arguments at once, which saves us implementation time and lines of code since we don't have to write out all those individual setter & getter methods.
+`attr_*` methods can take multiple arguments at once which saves us a lot of time and lines of code (all those individual getter & setter methods that don't need to be written!)
 
 #### Implementation
-```ruby
-class Dog
-  attr_reader :name
-  # attr_writer :name
-  # attr_accessor :name
+* `attr_reader :name`
 
-  def initialize(name)
-    @name = name
-  end
+`#attr_reader` creates a getter method and instance variable using the same name as the argument being passed to it
 
-  def speak
-    "My name is #{@name}."
-  end
-end
+* `attr_writer :name`
 
-dog1 = Dog.new('Lucky')
-p dog1.name
-p dog1.name = 'Duke'
-p dog1.speak
-p dog1.name
-```
-* Here we see how `#attr_reader` on it's own, uses the name of the argument being passed to it to only create a getter method and instance variable. Our first call to the getter method `#name` runs successfully and returns `Lucky` because our instance variable `@name` was set to that value when `dog1` was created. Our code then raises an error when calling the setter method `#name=` which has not been created.
+`#attr_writer` creates a setter method and instance variable using the same name as the argument being passed to it
 
-* Let's comment out `#attr_reader` & the following code `p dog2.name` on line ??? and comment in `#attr_writer`. Here we see how `#attr_writer` on it's own, uses the name of the argument being passed to it to only create a setter method and instance variable. Calling our setter method `#name=` runs successfully, we know this because when we invoke `#speak`, `Duke` is returned showing that our instance variable `@name` has been changed to that value. Our code then raises an error when calling the getter method `#name` which has not been created.
+* `attr_accessor :name` 
 
-* Now let's comment out both `#attr_reader` & `#attr_writer` and comment in all other lines of code. From this, we see how `#attr_accessor` uses the name of the argument being passed to it to create a setter method, a getter method, and an instance variable. All of our getter (`#name`) & setter (`#name=`) method calls run successfully (i.e. they've been created) and they all return the value of our instance variable `@name` at that point in time.
+`#attr_accessor` creates a getter method, a setter method and an instance variable using the same name as the argument being passed to it
 
 
 #### REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS
