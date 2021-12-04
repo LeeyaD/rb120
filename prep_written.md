@@ -11,7 +11,7 @@ While working through the assessment questions it is useful to run your code oft
 
 Precision of Language: In programming, we must always concern ourselves with outputs, return value, and object mutations. We must use the right terms when we speak, and not use vague words like "results." Furthermore, we need to be explicit about even the smallest details.
 
-### WHAT IS OOP? (OOP1)
+### WHAT IS OOP? (01)
 A Programming model where areas of code that perform certain procedures are sectioned off, allowing programs to become an interaction of many small parts that can be changed/manipulated without affecting the entire program.
 
 
@@ -21,7 +21,7 @@ A Programming model where areas of code that perform certain procedures are sect
 * Naming those small parts (i.e. classes & objects) after real-world nouns and modeling them appropriate to the problem, lets programmers think at a higher level of abstraction when designing and helps them break down and solve problems that arise.
 
 
-### CLASSES AND OBJECTS (OOP2)
+### CLASSES AND OBJECTS (02)
 Classes are like templates, they define our object's attributes & behaviors through the use of instance & class variables and instance & class methods. Objects are created from classes and contain the combination of attributes and behaviors outlined in the class definition.
 
 #### Implementation
@@ -42,7 +42,7 @@ p dog1.name
 Here, our class `Dog` is defined with one attribute (a name) and one behavior (a method that exposes that attribute). We created a new `Dog` object by calling `#new` on class `Dog` and passing it a required argument that'll be passed to `#initialize` where it will be assigned to the instance variable `@name`. To sum up, we've instantiated a `Dog` object called `dog1` with one attribute (a name) and one behavior (the ability to tell us it's name.)
 
 
-### INSTANCE VARIABLES vs. CLASS VARIABLES (OOP3)
+### INSTANCE VARIABLES vs. CLASS VARIABLES (03)
 Instance variables have `@` appended to the front of the variable name. They store the state of an object, are scoped at the object-level and are only accessible via an instance method. They have to be initialized in order to be referenced. If they're initialized in a method, that method must be called first. If this doesn't happen, the initialization doesn't occur and when referenced the instance variable will return nil.
 ```ruby #instance variable
 module Capable
@@ -98,7 +98,7 @@ p darlene.number_of_humans
 Here, we see how instance and class methods both have access to class variables. `@@number_of_humans` is initialized to zero in the definition of our `Human` class and every time an object is instantiated, the value of `@@number_of_humans` increases by 1. After we create the object `leeya` from the `Human` class, we call our instance method `#number_of_humans` on it and we call our class method `#number_of_humans` on our `Human` class. Both output the correct number of objects created thus far, showing that both have access to the class variable. We see it again when we instantiate another object from the `Human` class (`darlene`) and run the same methods, the count has increased by 1.
 
 
-#### HOW TO CALL SETTERS & GETTERS (OOP4)
+#### HOW TO CALL SETTERS & GETTERS (04)
 ```ruby
 class Dog
   attr_accessor :name
@@ -133,7 +133,7 @@ When calling the setter method `#name=` **outside the class** the syntax when us
 Calling the **getter** method `#name` both within & outside of the class, returns the same thing, the value of our instance variable `@name`. We see this demonstrated in the numerous calls to `#name` outside of the class and when we invoke the `#speak` method, its implementation includes our getter method.
 
 
-### USING ATTR_* TO CREATE SETTER & GETTER METHODS (OOP5)
+### USING ATTR_* TO CREATE SETTER & GETTER METHODS (05)
 Ruby has built-in `attr_*` methods that take symbols as arguments and use them to create a getter & setter method and an instance variable of the same name. 
 
 #### Benefit(s)
@@ -168,7 +168,7 @@ p dog1.name
 * Now let's comment out both `#attr_reader` & `#attr_writer` and comment in all other lines of code. From this, we see how `#attr_accessor` uses the name of the argument being passed to it to create a setter method, a getter method, and an instance variable. All of our getter (`#name`) & setter (`#name=`) method calls run successfully (i.e. they've been created) and they all return the value of our instance variable `@name` at that point in time.
 
 
-#### REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS (OOP6)
+#### REFERENCING & SETTING @VARS vs. USING GETTERS & SETTERS (06)
 We can reference and set instance variables in one of two ways. Either directly by using the instance variables themselves or indirectly by using getter & setter methods.
 
 #### Benefit(s)
@@ -192,7 +192,7 @@ class Person
 end
 ```
 
-### INSTANCE METHODS vs. CLASS METHODS (OOP7)
+### INSTANCE METHODS vs. CLASS METHODS (07)
 An instance method is an instance-level method defined within our class that's available to all objects instantiated from the same class. It has access to instance and class variables and serves as a way for us to expose information about the state of our object and class.
 
 A class method is a class-level method defined within our class. It has access to class variables only and serves as a way for us to expose information about the state of our class. It's called directly on the class itself whether an object has been instantiated or not.
@@ -241,7 +241,7 @@ Here are what the followng method calls demonstrate:
 * In this code, `leeya.number_of_humans`, we're calling the instance method `#number_of_humans` on the object `leeya`. This shows that instance methods have access to class variables and are capable of exposing information about the state of the class too.
 
 
-### ENCAPSULATION (OOP8)
+### ENCAPSULATION (08)
 Hiding certain data/functionality of an object by making it unavailable to access and/or change from the outside without explicit intention. 
 
 #### Benefit(s)
@@ -269,7 +269,7 @@ Here by not creating a setter method for our instance variable `@grade` we're no
 2. Through the use of Method Access Modifiers (OOP9)
 
 
-### METHOD ACCESS CONTROL (OOP9)
+### METHOD ACCESS CONTROL (09)
 Access control means restricting access to things, in this case methods hence the name "**Method** Access Control". In Ruby, we apply this concept to our methods thru the use of *access modifiers*, which are Ruby's built-in keywords **public**, **protected**, and **private**. If a method is defined under **private** it's a private method, **protected** it's a protected method and **public** it's a public method. An important note though is any method not defined under a keyword is automatically made public.
 
 A public method can be accessed (i.e. called) both inside and outside the class.
@@ -300,7 +300,7 @@ class Student
   end
   
   def show_grade
-    "My name is #{name} and my grade is #{self.grade}."
+    "Student: #{name} | Grade: #{self.grade}"
   end
 
   def grade
@@ -322,11 +322,22 @@ p andrew.show_grade
 p leeya.calculate_grade # will error out, trying to access private method
 p leeya > andrew
 ```
-The `#grade` method is a public method. This code shows how public methods can be called from both inside and outside the class. From inside the class, we call `#grade` within our `#show_grade` method and from outside the class we call `#grade` on our instantiated `Student` object `leeya`. Both method calls run with no errors. 
+The `#grade` method is a public method and shows how public methods can be called from both inside and outside the class. From inside the class, we call `#grade` within our `#show_grade` method and from outside the class we call `#grade` on our instantiated `Student` object `leeya`. Both method calls return the value of our instance variable `@grade` as expected.
 
-The `#calculate_grade` method is a private method. This code shoes how private methods can only be called from within the class and only on the calling object. 
-The implementation details of the method though are within the private method `#calculate_grade`. This means that we can't call `#calculate_grade` from outside the class and that if we do use it inside the class it can only be called on ourselves, the calling object. This aspect of private methods is demonstrated when the code `leeya.show_grade` is run and outputs as expected and the code `p leeya.calculate_grade` raises the `NoMethodError` as expected.
-If we don't want our student's grades accessible from outside the the class and only want to access them when comparing grades amongst other students (i.e. other objects of the same class) we can make `#grade` a protected method.
+The `#calculate_grade` method is a private method and shows how private methods can only be called from within the class. This is demonstrated when the code `p leeya.show_grade` outputs what we expect and the code `p leeya.calculate_grade` raises the `NoMethodError` as expected.
+
+Let's comment out`p leeya.calculate_grade` and run the code again. At this point all our other method calls run and output what we expect:
+* `p leeya.grade` outputs leeya's grade, `90`
+* `p andrew.show_grade` outputs "Student: Andrew | Grade: 93."
+* `p leeya > andrew` outputs "Andrew's grade is higher."
+
+From this we know that objects of the `Student` class can expose a student's grade via 2 methods and compare one student's grade to another. Let's say we only want to access a student's grade with explicit intent by using the `#show_grade` method and that we want to restrict `#grade`'s ability to access this data from outside the class.
+
+If we move `#grade` under the access modifier **private** we restrict access to the student's grade from outside the class, we know this because a `NoMethodError` is raised when `p leeya.grade` is run. Although this is what we want, if we comment out `p leeya.grade` we see that we're also raising a `NoMethodError` when `p leeya > andrew` runs. Because we made `#grade` into a private method, we can no longer share data between objects of the same class because private methods can only be called on the calling object.
+
+If we don't want our student's grades accessible from outside the the class and only want to access them when comparing grades amongst other students (i.e. other objects of the same class) we need to make `#grade` a protected method. Let's move `#grade` out from under the **private** access modifier, add the **protected** modifier above it and comment back in `p leeya.grade` but move it so it's the very last code to run.
+
+Now our code runs the way we'd like, we've limited access to students' grades but are still able to compare grades between other student objects.
 
 
 ### CLASS INHERITANCE (OOP10)
@@ -536,16 +547,15 @@ Class Fooey doesn't inherit from a module, it's just stored in it
 ### SELF (OOP15)
 Using `self` allows us to be explicit about what our program is referencing. What `self` refers to depends on what scope it's used in.
 
-When used within an instance method it refers to the instance itself (i.e. the calling object)
-For example, inside setter methods
+**When used within an instance method it refers to the instance itself (i.e. the calling object)**
 ```ruby
 def name=(n)
   self.name = n
 end
 ```
-without `self` Ruby will interpret `name` as a local variable and no state would be set.
+Here we're using `self` inside a setter method, without it Ruby will interpret `name` as a local variable and no state would be set.
 
-When used within a class but outside of an instance variable, `self` will refers to the class itself
+**When used within a class but outside of an instance method, `self` refers to the class itself**
 ```ruby
 class Seamstress
   def self.who_am_i?
@@ -555,7 +565,7 @@ end
 
 Seamstress.who_am_i?
 ```
-Here we're using `self` outside of an instance method but within the class and so both are refering to the class itself. The first one though is prepending the method name in our method definition which means we're defining a class method.
+Here we're using `self` outside of an instance method but within the class and so both are refering to the class itself. The first one on line ??? is prepended to the method name in our method definition because we're defining a class method.
 
 ```ruby
 module Measurable
@@ -579,31 +589,53 @@ Seamstress.new.measure
 Cobbler.new.measure
 p self
 ```
-From the output we see that `self`: 
-* inside module `Measurable` but outside a method refers to the module itself 
-* inside module `Measurable` but specifically inside an instance method refers to the instance itself (i.e. the calling object)
-* inside class `Seamstress` but outside a method refers to the class itself
-* outside any class it refers to the main scope
+What `self` refers to depends on what scope it's used in. Thi fact is further substantiated by the output from the code above. In it we see:
+* when `self` is inside the module `Measurable` but outside a method, it refers to the module itself.
+* when `self` is inside an instance method defined in the module `Measurable`, it refers to the instance itself (i.e. the calling object).
+* when `self` is inside the class `Seamstress` but outside a method, it refers to the class itself.
+<!-- * when `self` is outside any class it refers to the `main` scope --> Maybe leave this out...???
 
 
-### FAKE OPERATORS
-Ruby has syntactic sugar which allows us to invoke methods using syntax that is more natural and easy to read but the added sugar makes these methods seem like Ruby operators. Since these methods aren't really operators, they're called "fake operators". 
+### FAKE OPERATORS (OOP16)
+Ruby's syntactic sugar allows us to invoke methods using syntax that is natural and easy to read. The added sugar makes these methods seem like Ruby operators even though they're not, they're what we call **fake operators**. 
 
-For example, the inclusive range, `..`, is an operator and looks like this when used `5..10`
-
-On the other hand, the plus `+`, looks like an operator when called like this `5 + 10 # => 15` due Ruby's syntactic sugar. Without that sugar, the syntax would be `5.+(10)`
+Plus `+` looks like an operator when called (`5 + 10`), thanks to Ruby's syntactic sugar. Without the added sugar, we'd call it like this `5.+(10)`. Written like that, it's easy to see that it's actually a method.
 
 Overriding fake operator methods makes Ruby powerful by giving the programmer flexibility to specify what data can be manipulated.
 
 When doing this it's important to choose functionality that follows the general usage and convention from the Ruby standard library. 
 
-For example, when overriding the `#<<` method in a class, the method should follow the Ruby standard library use for the method and it should be used to add something to a collection. The 'something' being left up to the programmer to determine (e.g. a piece of data or an entire object)
+For example, when overriding the `#<<` method, it should follow the Ruby standard library use for the method and be used to add something to a collection.
+#### Implementation
+```ruby
+class Dog
+  attr_reader :name, :age, :breed
+
+  def initialize(name, age, breed)
+    @name = name
+    @age = age
+    @breed = breed
+  end
+
+  def ==(other_dog)
+    self.breed == other_dog.breed
+  end
+end
+
+lassie = Dog.new('Lassie', 4, "Collie")
+bo = Dog.new('Bo', 5, "Collie")
+duke = Dog.new('Duke', 7, "Great Dane")
+
+p lassie == bo
+p lassie == duke
+```
+Here we overrode the fake operator `#==` in our `Dog` class in order to give objects instantiated from this class the ability to compare themselves. The criteria for which was decided by us the programmer and in this code objects of the `Dog` class are considered equal when they're off the same breed. 
 
 
-### EQUIVALENCE
+### EQUIVALENCE (OOP17)
 The equality operator, `==`, is actually a method defined differently by various built-in Ruby classes (`String#==`, `Array#==`, `Hash#==`) to specify how to compare objects from those classes.
 
-When left undefined `#==` will default to `BsaicObject#==` which returns `true` only when the objects being compared are the same object.
+When left undefined `#==` will default to `BsaicObject#==` which returns `true` only when the objects being compared are the same exact object.
 ```ruby
 a = "hello"
 b = "hello"
@@ -611,32 +643,32 @@ p a.object_id
 p b.object_id
 p a == b
 ```
-This method being called in this code is `String#==` and we can see that `#==` doesn't look for the objects being compared to be the exact same object but rather for their values to be the same. 
+Here the `#==` method being called in this code is given to us by the `String` class. From the output we can see that `String#==` doesn't check if the 2 objects being compared are the same object, rather it returns `true` when the *values* of both objects are the same.
 
-The `equal?` method is used to compare objects to check if they point to the *same*object or space in memory. 
+The `equal?` method is used to compare objects to check if they point to the *same* object/space in memory. 
 
 
-### TRUTHINESS
-Aside from `false` and `nil`, Ruby considers everything to be *truthy*. Meaning excluding `false` and `nil` all other objects **evaluate** to `true`
+### TRUTHINESS (OOP18)
+Aside from `false` and `nil`, Ruby considers everything to be *truthy*. Objects that are truthy **evaluate** to `true`.
 ```ruby 
 p !!5 
 p !!'hello'
 p !![1, 2, 3]
 ```
-Here we're using the `!!` operator to convert these object's truthy values into Booleans and since Ruby evaluates all objects except for `false` and `nil` to `true` we get `true` returned for all 3 lines.
+Here we're using the `!!` operator to convert these objects' truthy values into Booleans and since none of these objects are `false` nor `nil` all 3 lines return `true`.
 ```ruby
 p 5 == true
 p 'hello' == true
 p [1, 2, 3] == true
 ```
-Code above returned `false` all 3 times because truthy does not equal `true`, which is an actual object from the `TrueClass` class.
+This code returns `false` all 3 times because truthy does not equal `true`. Evaluating to true is not the same as being an actual object from the `TrueClass` class, which is what `true` actually is.
 
 
-### WORKING WITH COLLABORATOR OBJECTS
-A collaborator object is an object of any kind, though usually a custom object, stored as state within another object. The relationship is based on association (`has-a`) not inheritance (`is-a`).
+### WORKING WITH COLLABORATOR OBJECTS (OOP19)
+A collaborator object is an object of any kind, usually a custom object, that is stored as state within another object. The relationship is based on association (i.e. `has-a` relationship) and not inheritance (i.e. `is-a`relationship).
 
 #### Benefit(s)
-* Modeling complicated problem domains by representing the connections between various parts in a program.
+* It models complicated problem domains by representing the connections between various parts in a program.
 
 #### Implementation
 ```ruby
@@ -654,12 +686,10 @@ class Employee
     @name = name
   end
 end
-company1 = Company.new('Etsy')
+etsy = Company.new('Etsy')
 leeya = Employee.new('Leeya')
 
-company1.employees << leeya
-p company1.employees
+etsy.employees << leeya
+p etsy.employees
 ```
-Here we have 2 objects being instantiated; `company1` is an instance of the `Company` class and `leeya` is an instance of the `Employee` class. On the next line we're adding our `Employee` object `leeya` to the collection of employees in `company1`. Here, `leeya` is a collaborator object`company1` has a collaborator object (`leeya`).
-
-# ****************** RETURN TO METHOD ACCESS CONTROL TO FINISH!!! **********************
+Here we have 2 objects being instantiated; `etsy` is an instance of the `Company` class and `leeya` is an instance of the `Employee` class. In the next line of code we're adding our `Employee` object `leeya` to the collection of employees in `etsy`. With this, `leeya` is now a collaborator object of `etsy`.
