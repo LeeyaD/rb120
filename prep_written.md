@@ -348,20 +348,20 @@ This domain model based on hierarchy allows us to extract common behavior to the
 
 #### Implementation
 ```ruby
-class Hobbies
-  def take_class; end
+class Handcraft
+  def start_project; end
   def buy_supplies; end
 end
 
-class Sewing < Hobbies
-  def remodel_room; end
+class Sewing < Handcraft
+  def select_pattern; end
 end
 
-class ShoeMaking < Hobbies
-def find_workshop; end
+class ShoeMaking < Handcraft
+  def measure_foot; end
 end
 ```
-Here both `Sewing` and `ShoeMaking` subclass `Hobbies`. `Sewing` **is-a** `Hobbie` as is `Shoemaking`. The common behavior `#take_class` and `#buy_supplies` have been extracted to the superclass `Hobbies` while specialized behavior specific to each subclass is defined within them. `#remodel_room` within `Sewing` and `#find_workshop` within `ShoeMaking`
+Here both `Sewing` and `ShoeMaking` subclass `Handcraft`. `Sewing` **is-a** type of craft done by hand as is `Shoemaking`. The common behavior `#start_project` and `#buy_supplies` have been extracted to the superclass `Handcraft` while specialized behavior specific to each subclass is defined within them. `#select_pattern` within `Sewing` and `#measure_foot` within `ShoeMaking`.
 
 
 ### Modules (OOP11)
@@ -404,7 +404,7 @@ end
 food = Food::Korean.new
 korean = Language::Korean.new 
 ```
-Here we're pretending to create a comprehensive app about everything there is to know about Korea. We've decided that given how extensive each topic is, it'd be best to section off our data and functionality by major areas like `Food` and `Language`. And so, we use modules to group both our `Korean` classes into their respective named spaces.
+Here we're pretending to create a comprehensive app about everything there is to know about Asia. We've decided that given how extensive each topic is for each county, it'd be best to section off our data and functionality by major areas like `Food` and `Language`. And so, we use modules to group both our `Korean` classes into their respective named spaces. Now when we create new objects from either class for example, it's clear from the namespace which topic we're referring to.
 
 * Module Methods
 When we use modules as containers for methods that seem out of place in our code.
@@ -426,7 +426,7 @@ Because we prepended `self` to our method definition, we can call the method eit
 
 #### Interface Inheritance
 * models association between classes, **has-a** relationship
-* doesn't inherit from another type, rather inherits the interface provided by the mixed in module in a 
+* doesn't inherit from another type, rather inherits the interface provided by the mixed in module in 
 * doesn't result in a specialized type
 * a class can have as many mixed in modules as we want
 * objects cannot be instantiated from a module
@@ -438,7 +438,7 @@ When objects of different types respond to the same method invocation in differe
 #### 2 main ways this is implemented are
 1. Polymorphism thru inheritance
 ``` ruby
-class Hobbies
+class Handcraft
   def start_project
     select_pattern
   end
@@ -448,24 +448,24 @@ class Hobbies
   end
 end 
 
-class Sewing < Hobbies
+class Sewing < Handcraft
   def start_project
     super
     puts "Let's get sewing!"
   end
 end
 
-class ShoeMaking < Hobbies
+class ShoeMaking < Handcraft
   def start_project
     puts "Let's get shoe making!"
   end
 end
 
-hobbies = [Sewing.new, ShoeMaking.new]
-hobbies.each { |hobby| hobby.start_project }
+handcraft = [Sewing.new, ShoeMaking.new]
+handcraft.each { |hobby| hobby.start_project }
 ```
-Here we have polymorphism through inheritance, 2 different but related objects responding to the same method call. Although `Sewing` and `ShowMaking` are different classes, they're related because they both subclass `Hobbies`.
-First we initialize the local variable `hobbies` to a 2-element `Array` where the elements are two objects instantiated from different classes; one from the `Sewing` class and the other from the `ShoeMaking` class. On the next line, we're iterating through our `hobbies` array, passing each object to the block where we call the same method on them, `#start_project`. This is where polymorphism happens, these two different objects are responding to the same method call. The `Sewing` class uses the built-in Ruby keyword `super` to specialize the implementation of the class inherited method `#start_project` meanwhile the `ShoeMaking` class overrides it entirely.
+Here we have polymorphism through inheritance, 2 different but related objects responding to the same method call. Although `Sewing` and `ShowMaking` are different classes, they're related because they both subclass `Handcraft`.
+First we initialize the local variable `handcraft` to a 2-element `Array` where the elements are two objects instantiated from different classes; one from the `Sewing` class and the other from the `ShoeMaking` class. On the next line, we're iterating through our `handcraft` array, passing each object to the block where we call the same method on them, `#start_project`. This is where polymorphism happens, these two different objects are responding to the same method call. The `Sewing` class uses the built-in Ruby keyword `super` to specialize the implementation of the class inherited method `#start_project` meanwhile the `ShoeMaking` class overrides it entirely.
 
 2. Polymorphism through duck-typing
 ``` ruby
