@@ -3,7 +3,7 @@ Present or teach OOP topics. You should be able to talk about:
 * why they exist (benefit)
 * how to use them in code (code example)
 
-### WHAT IS OOP? (01)
+### WHAT IS OOP?
 A Programming model where areas of code that perform certain procedures are sectioned off, allowing programs to become an interaction of many small parts that can be changed/manipulated without affecting the entire program.
 
 #### Benefits
@@ -56,32 +56,120 @@ Create a simple class with an attribute & 2 behaviors; one instance-level and on
 ### ENCAPSULATION (08)
 Hiding certain data/functionality of an object by making it unavailable to access and/or change from the outside without explicit intention. 
 
-#### Benefit(s)
-* It gives us the power to control the level of accessibility to our program, allowing us to expose functionality only to the users and/or parts of the program that need it. 
+* Encapsulation in object oriented programming is the grouping of data into objects while making that data unavailable to other parts of a codebase. 
+* to say that we have encapsulated data is to say that we have hidden the state and behaviors of an object from the rest of the codebase. To say that we are hiding data is to say that we are making that data inaccessible from the rest of the program, which also protects that data from unintentional manipulation.
+* Ruby uses the concept of access control to restrict and open access to the methods that allow one to retrieve and manipulate data within an object.
+* In Ruby, methods are public unless explicitly declared to be private or protected.
+* It also demonstrates how we can encapsulate methods
+* Like private methods, protected methods can only be invoked from within the class, but unlike private methods they can be invoked on both self and other objects of the same class.
+* Encapsulating data into objects has two chief benefits:
+1. It protects data from unintentional manipulation. In other words, in order to change data within an object there must be obvious intention behind doing so. It also means that we can restrict the way in which data is manipulated, so as to prevent it from being manipulated arbitrarily.
+2. It allows us to hide complex operations while leaving a simple public interface to interact with those more complex operations.
+Let’s illustrate these benefits with an example.
+```ruby
+class Person
+  attr_accessor :car
 
-#### Implementation done in 1 of 2 ways
-1. By **not** creating methods that interact with the data we want to hide
-``` ruby
-class Student
-  attr_accessor :name
-  attr_reader :grade
-
-  def initialize(name, grade)
+  def initialize(name)
     @name = name
-    @grade = grade
+    @car = nil
   end
 end
 
-leeya = Student.new('Leeya', 90)
-p leeya.grade
-leeya.grade = 100
+class Car
+  attr_reader :make, :model, :year, :engine_status
+
+  def initialize(make, model, year)
+    @make = make
+    @model = model
+    @year = year
+    @engine_status = :off
+  end
+
+  def start_engine
+    switch_ignition
+    start_relay
+    start_motor
+    puts "Engine is #{engine_status}!"
+  end
+
+  private
+
+  attr_writer :engine_status
+
+  def switch_ignition
+    # implementation
+    puts 'Starting ignition...'
+  end
+
+  def start_relay
+    # implementation
+    puts 'Starting relay...'
+  end
+
+  def start_motor
+    # implementation
+    puts 'Starting motor...'
+    self.engine_status = :on
+  end
+end
+
+joe = Person.new('Joe')
+joe.car = Car.new('Chevy', 'Impala', 1958)
+
+joe.car.start_engine
+# => 'Starting ignition...'
+# => 'Starting relay...'
+# => 'Starting motor...'
+# => 'Engine is on!'
+
+puts joe.car.engine_status
+# => 'on'
+
+joe.car.engine_status = :off
+# => private method `engine_status=' called for #<Car:0x0000000147948bd8 @make="Chevy", @model="Impala", @year=1958, @engine_status=:on> (NoMethodError)
 ```
-Here by not creating a setter method for our instance variable `@grade` we're not allowing this piece of data to be changed or manipulated from the outside. This can be seen when our code `leeya.grade = 100`, which is trying to change the value of the instance variable `@grade` in the object `leeya`, raises a `NoMethodError`.
+The above code illustrates a simple but key point: in order to start the car, the object joe doesn’t need to know the implementation details of every method involved in starting the engine, or even that those methods exist. More specifically, objects of the Person class do not need to access the switch_ignition, start_relay and start_motor methods, which are all necessary steps in starting an engine. Rather, the only method that objects of the Person class need to know about is the start_engine method; all other implementation details that follow from this method can remain hidden and inaccessible.
+And that is encapsulation in practice. We’ve packaged all of the complex details involved in starting an engine, have made them inaccessible outside of the Car class and instead have defined a simple public interface — the start_engine method — to handle all of the underlying complexity. In fact, this models the real world implementation of starting a car: one doesn’t need to know the internal mechanics of how exactly a car engine starts. Instead, a person only needs to know how to turn the ignition with a key. The rest of the implementation happens under the hood and out of sight; in other words, it is encapsulated.
+Notice as well that while we have defined a public getter method for the @engine_status instance variable in line 11, we have made its setter method in line 27 private. While we may want the status of the engine to be publicly accessible (for example, a mobile app is able to check if the engine is running), we want only the internal implementation of the object’s class to be able to reassign it, which protects it from the possibility of being directly changed from outside the class. In practical terms, we don’t want an object other than a Car to be able to modify @engine_status. Rather, we want it to be changed only as a result of the internal implementation that begins with the public start_engine method and ends with the private start_motor method. We want the value of @engine_status to reflect the actual status of the engine, while also preventing arbitrary changes that don’t. Using method access control to structure our methods this way ensures that @engine_status is manipulated with clear intention and only in the specific way we’ve designed it to be changed in our program.
 
-2. Through the use of Method Access Modifiers (OOP9)
+In summary, encapsulation allows a programmer to group data into objects and then hide that data from the rest of the codebase. Likewise, it also allows a programmer to expose only data that needs to be accessed outside of the class. By encapsulating data, we can prevent arbitrary changes to data, and we can also hide complex operations while providing a simple public interface to interact with them.
 
 
-### METHOD ACCESS CONTROL (09)
+### METHOD ACCESS CONTROL
+Protected methods lie between public and private methods. Like private methods, they can only be invoked from within the class where they are defined. However, unlike private methods they can be invoked on a calling object other than self, so long as the calling object is an instance of the same class. Protected methods aren’t commonly used, but one common use case is when comparing objects of the same class.
+```ruby
+
+class Dog
+  def initialize(name, weight, age)
+    @name = name
+    @weight = weight
+    @age = age
+  end
+
+  def <(other)
+    weight < other.weight
+  end
+
+  protected
+
+  def weight
+    @weight
+  end
+end
+
+spot = Dog.new('Spot', 12, 4)
+daisy = Dog.new('Daisy', 25, 12)
+
+puts spot < daisy
+# => true
+
+puts spot.weight
+# => protected method `weight' called for #<Dog:0x00000001260c1710 @name="Spot", @weight=12, @age=4> (NoMethodError)
+```
+In the above example we’ve declared weight as a protected method. This allows us to protect the weight method from being accessed outside of the Dog class, while also allowing us to compare the weight of objects of the Dog class as defined in the < method on lines 8–10. Like private methods, protected methods can only be invoked from within the class, but unlike private methods they can be invoked on both self and other objects of the same class.
+
+
 Access control means restricting access to things, in this case methods hence the name "**Method** Access Control". In Ruby, we apply this concept to our methods thru the use of *access modifiers*, which are Ruby's built-in `Module` methods **public**, **protected**, and **private**. If a method is defined under **private** it's a private method, **protected** it's a protected method and **public** it's a public method. An important note though is any method not defined under a keyword is automatically made public.
 
 A public method can be accessed (i.e. called) both inside and outside the class.
@@ -90,72 +178,12 @@ A private method can only be called within the class on ourselves (i.e the calli
 
 A protected method like a private method can only be called within the class but it can be called not only on the calling object but other objects of the same class. We use this modifier when we want to share data between instances of the same class.
 
-#### Benefit(s) (See ENCAPSULATION, OOP8)
-
-#### Implementation
-```ruby
-class Student
-  attr_reader :name, :volunteer
-
-  def initialize(name, grade, volunteer=false)
-    @name = name
-    @grade = grade
-    @volunteer = volunteer
-  end
-
-  def >(other_student)
-    if grade > other_student.grade
-      "#{name}'s grade is higher."
-    else
-      "#{other_student.name}'s grade is higher."
-    end
-  end
-  
-  def show_grade
-    "Student: #{name} | Grade: #{self.grade}"
-  end
-
-  def grade
-    calculate_grade
-  end
-
-  private
-  
-  def calculate_grade
-    volunteer ? @grade + 3 : @grade
-  end
-end
-
-leeya = Student.new('Leeya', 90)
-andrew = Student.new('Andrew', 90, true)
-
-p leeya.grade
-p andrew.show_grade
-p leeya.calculate_grade # will error out, trying to access private method
-p leeya > andrew
-```
-The `#grade` method is a public method and shows how public methods can be called from both inside and outside the class. From inside the class, we call `#grade` within our `#show_grade` method and from outside the class we call `#grade` on our instantiated `Student` object `leeya`. Both method calls return the value of our instance variable `@grade` as expected.
-
-The `#calculate_grade` method is a private method and shows how private methods can only be called from within the class. This is demonstrated when the code `p leeya.show_grade` outputs what we expect and the code `p leeya.calculate_grade` raises the `NoMethodError` as expected.
-
-Let's comment out`p leeya.calculate_grade` and run the code again. At this point all our other method calls run and output what we expect:
-* `p leeya.grade` outputs leeya's grade, `90`
-* `p andrew.show_grade` outputs "Student: Andrew | Grade: 93."
-* `p leeya > andrew` outputs "Andrew's grade is higher."
-
-From this we know that objects of the `Student` class can expose a student's grade via 2 methods and compare one student's grade to another. Let's say we only want to access a student's grade with explicit intent by using the `#show_grade` method and that we want to restrict `#grade`'s ability to access this data from outside the class.
-
-If we move `#grade` under the access modifier **private** we restrict access to the student's grade from outside the class, we know this because a `NoMethodError` is raised when `p leeya.grade` is run. Although this is what we want, if we comment out `p leeya.grade` we see that we're also raising a `NoMethodError` when `p leeya > andrew` runs. Because we made `#grade` into a private method, we can no longer share data between objects of the same class because private methods can only be called on the calling object.
-
-If we don't want our student's grades accessible from outside the the class and only want to access them when comparing grades amongst other students (i.e. other objects of the same class) we need to make `#grade` a protected method. Let's move `#grade` out from under the **private** access modifier, add the **protected** modifier above it and comment back in `p leeya.grade` but move it so it's the very last code to run.
-
-Now our code runs the way we'd like, we've limited access to students' grades but are still able to compare grades between other student objects.
-
 
 ### CLASS INHERITANCE
 * when one class (subclass) inherits behaviors from another class (superclass), thereby specializing the type of superclass.
 * applicable when there's a **is-a** relationship (i.e. hierarchical) between classes (e.g. a dog **is-an** animal, jazz **is-a** genre of music, etc).
 * allows us to extract common behavior to the superclass to be reused by subclasses > increases the reusability and flexibility of our code and reduces duplication in our codebase.
+
 
 ### MODULES
 Used to group reusable code in one place with 3 specific use cases.
@@ -174,64 +202,10 @@ Used to group reusable code in one place with 3 specific use cases.
 * containers for methods that seem out of place in our code.
 
 
-### POLYMORPHISM (OOP13)
-When objects of different types respond to the same method invocation in different ways. 
-
-#### 2 main ways this is implemented are
-1. Polymorphism thru inheritance
-``` ruby
-class Handcraft
-  def start_project
-    select_pattern
-  end
-
-  def select_pattern
-    puts "First we need a pattern."
-  end
-end 
-
-class Sewing < Handcraft
-  def start_project
-    super
-    puts "Let's get sewing!"
-  end
-end
-
-class ShoeMaking < Handcraft
-  def start_project
-    puts "Let's get shoe making!"
-  end
-end
-
-handcraft = [Sewing.new, ShoeMaking.new]
-handcraft.each { |hobby| hobby.start_project }
-```
-Here we have polymorphism through inheritance, 2 different but related objects responding to the same method call. Although `Sewing` and `ShowMaking` are different classes, they're related because they both subclass `Handcraft`.
-First we initialize the local variable `handcraft` to a 2-element `Array` where the elements are two objects instantiated from different classes; one from the `Sewing` class and the other from the `ShoeMaking` class. On the next line, we're iterating through our `handcraft` array, passing each object to the block where we call the same method on them, `#start_project`. This is where polymorphism happens, these two different objects are responding to the same method call. The `Sewing` class uses the built-in Ruby keyword `super` to specialize the implementation of the class inherited method `#start_project` meanwhile the `ShoeMaking` class overrides it entirely.
-
+### POLYMORPHISM
+When objects of different types respond to the same method invocation in different ways.
+1. Polymorphism thru inheritance (class & interface)
 2. Polymorphism through duck-typing
-``` ruby
-class Illustrator
-  def draw
-    "I love using bold colors in my work."
-  end
-end
-
-class GunSlinger
-  def draw
-    "Hands to the sky!"
-  end
-end
-
-class Cards
-  def draw
-    "Take 1 card..."
-  end
-end
-
-[Illustrator.new, GunSlinger.new, Cards.new].each { |object| p object.draw }
-```
-Polymorphism through duck-typing is when objects that are not only of different types, but that are completely unrelated, respond to the same method call. Here we have 3 different objects being instantiated from the completely unrelated classed `Illustrator`, `'GunSlinger`, and `Cards`. The objects are being instantiated in an array that is being iterated through. With each iteration, each object gets passed to the block where the method `#draw` is called on it. This is where polymorhism is occurring, even though these objects are different and completely unrelated, they're responding to the same method call, `#draw`, with different implementations.
 
 
 ### METHOD LOOKUP PATH
@@ -282,70 +256,3 @@ Class Fooey doesn't inherit from a module, it's just stored in it
 * Let's say we want to alter how a piece of data in our object is displayed. If we reference the `@var` directly, we'll have to add this display-altering code to every method that exposes this data. This will cause a lot of duplicate code and the chances of errors being raised from missing a method are high. If we're referencing this data with a getter method, we only need to add the display-altering code once and in one place; the getter method. This allows our code stays duplicate free (i.e. DRY) and accurate because we know the change will be program-wide with no methods accidentally missed.
 
 * Similarly for our setter method, if we wanted to validate input before updating/changing our objects state, we'd have to add our validating code to every method that may add/alter data in our instance variable. By using a setter method, we bottleneck where any additions/alterations can be made and if we want to add validation code, it only needs to be done in one place; the setter method.
-
-
-```ruby
-module Flightable
-  def fly
-    # METHOD IMPLEMENTATION
-  end
-end
-
-class Superhero 
-  include Flightable
-  
-  attr_accessor :ability
-  
-  def self.fight_crime
-    # METHOD IMPLEMENTATION
-  end
-  
-  def initialize(name)
-    @name = name
-  end
-  
-  def announce_ability
-    puts "I fight crime with my #{ability} ability!"
-  end
-end
-
-class LSMan < Superhero ; end
-
-class Ability
-  attr_reader :description
-
-  def initialize(description)
-    @description = description
-  end
-end
-
-superman = Superhero.new('Superman')
-superman.fly # => I am Superman, I am a superhero, and I can fly!
-LSMan.fight_crime
-# => I am LSMan!
-# => I fight crime with my coding skills ability!
-```
-ONLY touch methods that say 'METHOD IMPLEMENTATION' & use the Ability class
-
-
-=begin
-The local zoo is creating an app to redesign their habitats and decide
-which animals to put together. The first version of the app resulted in a
-bloodbath. Define the necessary classes and methods to implement the following functionality so that herbivores
-can't be placed in habitats with carnivores and vice versa.
-=end
-
-giraffe = Giraffe.new
-elephant = Elephant.new
-lion = Lion.new
-
-savannah = Habitat.new
-
-savannah << giraffe
-savannah << elephant
-savannah << lion # => Don't put carnivores and herbivores in the same habitat!
-
-prairie = Habitat.new
-
-prairie << lion
-prairie << elephant # => Don't put carnivores and herbivores in the same habitat!
