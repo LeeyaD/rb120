@@ -53,18 +53,15 @@ Create a simple class with an attribute & 2 behaviors; one instance-level and on
 * serves as a way for us to expose information about the state of our class
 
 
-### ENCAPSULATION (08)
-Hiding certain data/functionality of an object by making it unavailable to access and/or change from the outside without explicit intention. 
-
-* Encapsulation in object oriented programming is the grouping of data into objects while making that data unavailable to other parts of a codebase. 
-* to say that we have encapsulated data is to say that we have hidden the state and behaviors of an object from the rest of the codebase. To say that we are hiding data is to say that we are making that data inaccessible from the rest of the program, which also protects that data from unintentional manipulation.
-* Ruby uses the concept of access control to restrict and open access to the methods that allow one to retrieve and manipulate data within an object.
-* In Ruby, methods are public unless explicitly declared to be private or protected.
-* It also demonstrates how we can encapsulate methods
-* Like private methods, protected methods can only be invoked from within the class, but unlike private methods they can be invoked on both self and other objects of the same class.
+### ENCAPSULATION
+* the grouping of data/functionality into objects while making that data unavailable to access and/or change from other parts of a codebase without explicit intention.
 * Encapsulating data into objects has two chief benefits:
-1. It protects data from unintentional manipulation. In other words, in order to change data within an object there must be obvious intention behind doing so. It also means that we can restrict the way in which data is manipulated, so as to prevent it from being manipulated arbitrarily.
+1. It protects data from unintentional manipulation by making methods where the intent is obvious
 2. It allows us to hide complex operations while leaving a simple public interface to interact with those more complex operations.
+* Encapsulation is implemented in 2 ways:
+1. Thru the types of methods we create and/or don't create (e.g. `#change_name` over `#name=` or omitting a setter method)
+2. Method Access Control (via *access modifiers*)
+
 Let’s illustrate these benefits with an example.
 ```ruby
 class Person
@@ -137,46 +134,10 @@ In summary, encapsulation allows a programmer to group data into objects and the
 
 
 ### METHOD ACCESS CONTROL
-Protected methods lie between public and private methods. Like private methods, they can only be invoked from within the class where they are defined. However, unlike private methods they can be invoked on a calling object other than self, so long as the calling object is an instance of the same class. Protected methods aren’t commonly used, but one common use case is when comparing objects of the same class.
-```ruby
-
-class Dog
-  def initialize(name, weight, age)
-    @name = name
-    @weight = weight
-    @age = age
-  end
-
-  def <(other)
-    weight < other.weight
-  end
-
-  protected
-
-  def weight
-    @weight
-  end
-end
-
-spot = Dog.new('Spot', 12, 4)
-daisy = Dog.new('Daisy', 25, 12)
-
-puts spot < daisy
-# => true
-
-puts spot.weight
-# => protected method `weight' called for #<Dog:0x00000001260c1710 @name="Spot", @weight=12, @age=4> (NoMethodError)
-```
-In the above example we’ve declared weight as a protected method. This allows us to protect the weight method from being accessed outside of the Dog class, while also allowing us to compare the weight of objects of the Dog class as defined in the < method on lines 8–10. Like private methods, protected methods can only be invoked from within the class, but unlike private methods they can be invoked on both self and other objects of the same class.
-
-
-Access control means restricting access to things, in this case methods hence the name "**Method** Access Control". In Ruby, we apply this concept to our methods thru the use of *access modifiers*, which are Ruby's built-in `Module` methods **public**, **protected**, and **private**. If a method is defined under **private** it's a private method, **protected** it's a protected method and **public** it's a public method. An important note though is any method not defined under a keyword is automatically made public.
-
-A public method can be accessed (i.e. called) both inside and outside the class.
-
-A private method can only be called within the class on ourselves (i.e the calling object).
-
-A protected method like a private method can only be called within the class but it can be called not only on the calling object but other objects of the same class. We use this modifier when we want to share data between instances of the same class.
+* access control is the ability to control access to things, restricting access to things
+* Ruby uses the concept of access control to restrict and open access to the methods that allow one to retrieve and manipulate data within an object
+* methods are public unless explicitly declared to be private or protected.
+* Like private methods, protected methods can only be called from within the class, but unlike private methods they can be called on both self and other objects of the same class
 
 
 ### CLASS INHERITANCE
