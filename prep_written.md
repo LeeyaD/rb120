@@ -1,14 +1,4 @@
 #### Additional Tips
-Written & Interview are a mix of Conceptual & Code-Based Questions
-
-Read through all the questions first, you may end up going into detail
-
-Don't add more abstraction than needed in your explanation (e.g. talking about simple classes & objects don't add an attr_*)
-
-This assessment has a different style than the RB109 written assessment,so you should expect several open-ended questions where you will need to explain certain OOP concepts using code examples.
-
-While working through the assessment questions it is useful to run your code often to check it, so make sure to have either ruby document/terminal or an online repl prepared beforehand.
-
 Precision of Language: In programming, we must always concern ourselves with outputs, return value, and object mutations. We must use the right terms when we speak, and not use vague words like "results." Furthermore, we need to be explicit about even the smallest details.
 
 ### WHAT IS OOP? (01)
@@ -489,8 +479,31 @@ end
 
 [Illustrator.new, GunSlinger.new, Cards.new].each { |object| p object.draw }
 ```
-Polymorphism through duck-typing is when objects that are not only of different types, but that are completely unrelated, respond to the same method call. Here we have 3 different objects being instantiated from the completely unrelated classed `Illustrator`, `'GunSlinger`, and `Cards`. The objects are being instantiated in an array that is being iterated through. With each iteration, each object gets passed to the block where the method `#draw` is called on it. This is where polymorhism is occurring, even though these objects are different and completely unrelated, they're responding to the same method call, `#draw`, with different implementations.
+Polymorphism through duck-typing is when objects that are not only of different types, but that are unrelated, respond to the same method call. Here we have 3 different objects being instantiated from the unrelated classes `Illustrator`, `'GunSlinger`, and `Cards`. The objects are being instantiated in an array that is being iterated through. With each iteration, each object gets passed to the block where the method `#draw` is called on it. This is where polymorhism is occurring, even though these objects are different and unrelated, they're responding to the same method call, `#draw`, with different implementations.
+```ruby
+class ShoeMaker
+  def start_project
+    measure_feet
+    choose_pattern
+  end
+end
 
+class Carpenter
+  def start_project
+    choose_furniature_piece
+    choose_wood_type
+  end
+end
+
+class Mason
+  def start_project
+    choose_stone
+    measure_structure
+  end
+end
+
+[ShoeMaker.new, Carpenter.new, Mason.new].each { |object| p object.start_project }
+```
 
 ### METHOD LOOKUP PATH (OOP14)
 The order in which classes are inspected when a method is called. When a method is called Ruby will first look for it's definition in the current class, then proceed further up the lookup path until it finds a method of the same name. To see this in action we use the class method `#ancestors` which returns an array of class names in the lookup path based on the order they're checked.
