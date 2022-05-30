@@ -305,12 +305,12 @@ class Student
 end
 
 leeya = Student.new('Leeya', 90)
-andrew = Student.new('Andrew', 90, true)
+rich = Student.new('Rich', 90, true)
 
 p leeya.grade
-p andrew.show_grade
+p rich.show_grade
 p leeya.calculate_grade # will error out, trying to access private method
-p leeya > andrew
+p leeya > rich
 ```
 The `#grade` method is a public method and shows how public methods can be called from both inside and outside the class. From inside the class, we call `#grade` within our `#show_grade` method and from outside the class we call `#grade` on our instantiated `Student` object `leeya`. Both method calls return the value of our instance variable `@grade` as expected.
 
